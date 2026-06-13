@@ -1,0 +1,38 @@
+# ============================================================
+#  Sensitive configuration — DO NOT COMMIT
+# ============================================================
+# Real credentials (Midtrans server key, Firebase, WhatsApp, etc.)
+config/app.php
+assets/js/firebase-init.js
+
+# Local environment files
+.env
+.env.*
+*.local
+
+# ============================================================
+#  Runtime / generated data
+# ============================================================
+uploads/
+temp/
+*.log
+
+# ============================================================
+#  Dependencies
+# ============================================================
+/vendor/
+/node_modules/
+
+# ============================================================
+#  OS & editor cruft
+# ============================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*~
+
+# Payment QR codes (merchant identity)
+image/qris*.png

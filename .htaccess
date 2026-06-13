@@ -1,0 +1,52 @@
+Options -Indexes
+Options -MultiViews
+
+# PHP settings
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+php_value max_execution_time 60
+
+# Serve .php files without extension (optional clean URLs)
+RewriteEngine On
+RewriteBase /
+
+# Redirect /page to /page.php (only if the .php file exists and the path isn't a real file/dir)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+)$ $1.php [L,QSA]
+
+# Security: block direct access to sensitive directories and files
+RewriteRule ^config/ - [F,L]
+RewriteRule ^temp/   - [F,L]
+RewriteRule ^\.      - [F,L]
+
+# Block access to PHP files inside api/ except legitimate endpoints
+<FilesMatch "^(?!midtrans-create|midtrans-notify|check-payment).*\.php$">
+  <IfModule mod_authz_core.c>
+    # Apache 2.4
+  </IfModule>
+</FilesMatch>
+
+# Cache static assets
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpeg  "access plus 1 month"
+  ExpiresByType image/png   "access plus 1 month"
+  ExpiresByType image/gif   "access plus 1 month"
+  ExpiresByType image/webp  "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType text/css    "access plus 1 week"
+  ExpiresByType text/javascript "access plus 1 week"
+  ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# Gzip compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript text/javascript application/json
+</IfModule>
+
+# Protect uploads directory — allow image viewing but block PHP execution
+<IfModule mod_rewrite.c>
+  RewriteRule ^uploads/.*\.php$ - [F,L]
+</IfModule>
