@@ -1,7 +1,7 @@
 <?php
 /**
- * Poll endpoint — frontend calls this after Snap popup closes to confirm payment
- * GET /api/check-payment.php?order_id=INV...
+ * Poll endpoint - frontend calls this after Snap popup closes to confirm payment
+ * GET /backend/api/check-payment.php?order_id=INV...
  */
 header('Content-Type: application/json');
 

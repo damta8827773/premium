@@ -1,5 +1,5 @@
-// Create a Premium Store deposit transaction — TypeScript
-const API_URL = "https://yourdomain.com/api/midtrans-create.php";
+// Create a Premium Store deposit transaction - TypeScript
+const API_URL = "https://yourdomain.com/backend/api/midtrans-create.php";
 
 interface DepositRequest {
   order_id: string;

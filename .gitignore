@@ -1,9 +1,9 @@
 # ============================================================
-#  Sensitive configuration — DO NOT COMMIT
+#  Sensitive configuration - DO NOT COMMIT
 # ============================================================
 # Real credentials (Midtrans server key, Firebase, WhatsApp, etc.)
-config/app.php
-assets/js/firebase-init.js
+backend/config/app.php
+frontend/assets/js/firebase-init.js
 
 # Local environment files
 .env
@@ -35,4 +35,4 @@ desktop.ini
 *~
 
 # Payment QR codes (merchant identity)
-image/qris*.png
+frontend/image/qris*.png

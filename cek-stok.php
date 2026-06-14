@@ -2,10 +2,10 @@
 $page_title = "Cek Stock";
 $current_page = "stok";
 $base_path = "";
-require_once 'includes/head.php';
+require_once 'backend/includes/head.php';
 ?>
 <div class="flex h-screen overflow-hidden">
-  <?php require_once 'includes/buyer-sidebar.php'; ?>
+  <?php require_once 'backend/includes/buyer-sidebar.php'; ?>
   <div class="flex-1 flex flex-col overflow-hidden">
     <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3 flex-shrink-0">
       <button class="lg:hidden text-gray-500" onclick="toggleSidebar()">
@@ -40,7 +40,7 @@ require_once 'includes/head.php';
     </main>
   </div>
 </div>
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once 'backend/includes/footer.php'; ?>
 <script>
 let allStockData = [];
 
@@ -99,7 +99,7 @@ function renderStock() {
     let imgHtml = `<div class="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center"><span class="text-primary font-bold text-sm">${p.name.charAt(0)}</span></div>`;
     const pNameLower = p.name.toLowerCase();
     for (const [key,file] of Object.entries(logoMap)) {
-      if (pNameLower.includes(key)) { imgHtml=`<img src="image/${file}" class="w-9 h-9 object-contain rounded-lg bg-gray-50 p-1">`; break; }
+      if (pNameLower.includes(key)) { imgHtml=`<img src="frontend/image/${file}" class="w-9 h-9 object-contain rounded-lg bg-gray-50 p-1">`; break; }
     }
 
     const variantsHtml = p.variants.map(v => {

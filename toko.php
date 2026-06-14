@@ -2,11 +2,11 @@
 $page_title = "Toko";
 $current_page = "toko";
 $base_path = "";
-require_once 'includes/head.php';
+require_once 'backend/includes/head.php';
 ?>
 
 <div class="flex h-screen overflow-hidden">
-  <?php require_once 'includes/buyer-sidebar.php'; ?>
+  <?php require_once 'backend/includes/buyer-sidebar.php'; ?>
 
   <div class="flex-1 flex flex-col overflow-hidden">
     <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between flex-shrink-0">
@@ -105,7 +105,7 @@ require_once 'includes/head.php';
   </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once 'backend/includes/footer.php'; ?>
 <script>
 let allProducts = [];
 let selectedVariant = null;
@@ -194,7 +194,7 @@ function renderProducts() {
     const pNameLower = p.name.toLowerCase();
     for (const [key, file] of Object.entries(logoMap)) {
       if (pNameLower.includes(key)) {
-        imgHtml = `<img src="image/${file}" alt="${p.name}" class="w-full h-full object-contain p-3">`;
+        imgHtml = `<img src="frontend/image/${file}" alt="${p.name}" class="w-full h-full object-contain p-3">`;
         break;
       }
     }
@@ -228,7 +228,7 @@ function openProduct(id) {
   const pNameLower = p.name.toLowerCase();
   let imgHtml = '<span class="text-2xl font-bold text-primary">'+p.name.charAt(0)+'</span>';
   for (const [key,file] of Object.entries(logoMap)) {
-    if (pNameLower.includes(key)) { imgHtml=`<img src="image/${file}" class="w-full h-full object-contain p-1">`; break; }
+    if (pNameLower.includes(key)) { imgHtml=`<img src="frontend/image/${file}" class="w-full h-full object-contain p-1">`; break; }
   }
   if (p.image) imgHtml=`<img src="${p.image}" class="w-full h-full object-contain p-1" onerror="this.outerHTML='${p.name.charAt(0)}'">`;
   document.getElementById('modal-img-wrap').innerHTML = imgHtml;

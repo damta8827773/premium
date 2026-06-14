@@ -1,4 +1,4 @@
-<?php $page_title = "Daftar — Premium App"; ?>
+<?php $page_title = "Daftar - Premium App"; ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -12,7 +12,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
-<script src="assets/js/firebase-init.js"></script>
+<script src="frontend/assets/js/firebase-init.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; display: flex; -webkit-font-smoothing: antialiased; }

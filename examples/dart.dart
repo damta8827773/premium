@@ -1,10 +1,10 @@
-// Create a Premium Store deposit transaction — Dart
+// Create a Premium Store deposit transaction - Dart
 // deps: http: ^1.0.0
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 void main() async {
-  final apiUrl = Uri.parse('https://yourdomain.com/api/midtrans-create.php');
+  final apiUrl = Uri.parse('https://yourdomain.com/backend/api/midtrans-create.php');
 
   final payload = {
     'order_id': 'DEP-${DateTime.now().millisecondsSinceEpoch ~/ 1000}',

@@ -1,9 +1,9 @@
-// Create a Premium Store deposit transaction — Scala
+// Create a Premium Store deposit transaction - Scala
 import java.net.URI
 import java.net.http.{HttpClient, HttpRequest, HttpResponse}
 
 @main def createDeposit(): Unit =
-  val apiUrl  = "https://yourdomain.com/api/midtrans-create.php"
+  val apiUrl  = "https://yourdomain.com/backend/api/midtrans-create.php"
   val orderId = s"DEP-${System.currentTimeMillis() / 1000}"
 
   val body =

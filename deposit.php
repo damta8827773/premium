@@ -1,12 +1,12 @@
 <?php
-require_once 'config/app.php';
+require_once 'backend/config/app.php';
 $page_title = "Deposit Saldo";
 $current_page = "deposit";
 $base_path = "";
-require_once 'includes/head.php';
+require_once 'backend/includes/head.php';
 ?>
 <div class="flex h-screen overflow-hidden">
-  <?php require_once 'includes/buyer-sidebar.php'; ?>
+  <?php require_once 'backend/includes/buyer-sidebar.php'; ?>
   <div class="flex-1 flex flex-col overflow-hidden">
     <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3 flex-shrink-0">
       <button class="lg:hidden text-gray-500" onclick="toggleSidebar()">
@@ -74,11 +74,11 @@ require_once 'includes/head.php';
           <p class="font-bold text-gray-800 mb-3">QRIS untuk Pembayaran Manual</p>
           <div class="grid grid-cols-2 gap-4 mb-4">
             <div class="text-center">
-              <img src="image/qris 1.png" alt="QRIS 1" class="w-full max-w-[160px] mx-auto rounded-xl border border-gray-200">
+              <img src="frontend/image/qris 1.png" alt="QRIS 1" class="w-full max-w-[160px] mx-auto rounded-xl border border-gray-200">
               <p class="text-xs text-gray-400 mt-2">QRIS 1</p>
             </div>
             <div class="text-center">
-              <img src="image/qris 2.png" alt="QRIS 2" class="w-full max-w-[160px] mx-auto rounded-xl border border-gray-200">
+              <img src="frontend/image/qris 2.png" alt="QRIS 2" class="w-full max-w-[160px] mx-auto rounded-xl border border-gray-200">
               <p class="text-xs text-gray-400 mt-2">QRIS 2</p>
             </div>
           </div>
@@ -108,7 +108,7 @@ require_once 'includes/head.php';
 <!-- Midtrans Snap -->
 <script src="https://app.midtrans.com/snap/snap.js" data-client-key="<?= htmlspecialchars(MIDTRANS_CLIENT_KEY) ?>"></script>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once 'backend/includes/footer.php'; ?>
 <script>
 let selectedAmount = 0;
 let selectedMethod = 'midtrans';
@@ -180,7 +180,7 @@ async function processDeposit() {
 async function payMidtrans() {
   try {
     const orderId = 'DEP-' + currentUser.uid.slice(0,8) + '-' + Date.now();
-    const res = await fetch('api/midtrans-create.php', {
+    const res = await fetch('backend/api/midtrans-create.php', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ order_id: orderId, amount: selectedAmount, user_id: currentUser.uid, email: currentUser.email, name: currentUser.displayName || 'User' })

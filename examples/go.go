@@ -1,4 +1,4 @@
-// Create a Premium Store deposit transaction — Go
+// Create a Premium Store deposit transaction - Go
 package main
 
 import (
@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const apiURL = "https://yourdomain.com/api/midtrans-create.php"
+const apiURL = "https://yourdomain.com/backend/api/midtrans-create.php"
 
 func main() {
 	payload := map[string]any{

@@ -2,10 +2,10 @@
 $page_title = "Kelola Produk";
 $current_page = "admin-produk";
 $base_path = "../";
-require_once '../includes/head.php';
+require_once '../backend/includes/head.php';
 ?>
 <div class="flex h-screen overflow-hidden">
-  <?php require_once '../includes/admin-sidebar.php'; ?>
+  <?php require_once '../backend/includes/admin-sidebar.php'; ?>
   <div class="flex-1 flex flex-col overflow-hidden">
     <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between flex-shrink-0">
       <div class="flex items-center gap-3">
@@ -58,7 +58,7 @@ require_once '../includes/head.php';
   </div>
 </div>
 
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once '../backend/includes/footer.php'; ?>
 <script>
 let allProducts = [];
 let editingProductId = null;

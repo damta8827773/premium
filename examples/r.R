@@ -1,8 +1,8 @@
-# Create a Premium Store deposit transaction — R
+# Create a Premium Store deposit transaction - R
 library(httr)
 library(jsonlite)
 
-api_url <- "https://yourdomain.com/api/midtrans-create.php"
+api_url <- "https://yourdomain.com/backend/api/midtrans-create.php"
 
 payload <- list(
   order_id = paste0("DEP-", as.integer(Sys.time())),

@@ -3,7 +3,7 @@
 Each sample in this folder calls the **create payment transaction** endpoint:
 
 ```
-POST /api/midtrans-create.php
+POST /backend/api/midtrans-create.php
 ```
 
 It sends a deposit request and prints the returned Snap `token` and
@@ -36,5 +36,5 @@ deployed URL.
 | 19 | Scala | [scala.scala](scala.scala) | `scala scala.scala` |
 | 20 | R | [r.R](r.R) | `Rscript r.R` |
 
-> These are integration examples only — they contain no credentials. The
+> These are integration examples only - they contain no credentials. The
 > server key never leaves the backend.

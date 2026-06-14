@@ -1,4 +1,4 @@
-// Create a Premium Store deposit transaction — C++ (libcurl)
+// Create a Premium Store deposit transaction - C++ (libcurl)
 // build: g++ cpp.cpp -lcurl -o deposit
 #include <curl/curl.h>
 #include <ctime>
@@ -11,7 +11,7 @@ static size_t writeCb(void* ptr, size_t size, size_t nmemb, std::string* out) {
 }
 
 int main() {
-    const std::string url = "https://yourdomain.com/api/midtrans-create.php";
+    const std::string url = "https://yourdomain.com/backend/api/midtrans-create.php";
     std::string body =
         "{\"order_id\":\"DEP-" + std::to_string(std::time(nullptr)) + "\","
         "\"amount\":50000,\"user_id\":\"firebase-uid\","

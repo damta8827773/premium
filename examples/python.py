@@ -1,8 +1,8 @@
-"""Create a Premium Store deposit transaction — Python."""
+"""Create a Premium Store deposit transaction - Python."""
 import time
 import requests
 
-API_URL = "https://yourdomain.com/api/midtrans-create.php"
+API_URL = "https://yourdomain.com/backend/api/midtrans-create.php"
 
 payload = {
     "order_id": f"DEP-{int(time.time())}",

@@ -1,9 +1,9 @@
 <?php
 /**
- * Application configuration — TEMPLATE
+ * Application configuration - TEMPLATE
  * ------------------------------------------------------------
- * Copy this file to `config/app.php` and fill in your own
- * credentials. The real `config/app.php` is git-ignored and
+ * Copy this file to `backend/config/app.php` and fill in your own
+ * credentials. The real `backend/config/app.php` is git-ignored and
  * must NEVER be committed to a public repository.
  */
 
@@ -20,15 +20,15 @@ define('APP_URL', 'https://yourdomain.com'); // your deployed domain
 define('ADMIN_WA_1', '62XXXXXXXXXXX');       // admin WhatsApp number 1
 define('ADMIN_WA_2', '62XXXXXXXXXXX');       // admin WhatsApp number 2
 
-// Firebase (must match assets/js/firebase-init.js)
+// Firebase (must match frontend/assets/js/firebase-init.js)
 define('FIREBASE_PROJECT_ID', 'your-firebase-project-id');
 
 // Upload config
-define('UPLOAD_DIR', __DIR__ . '/../uploads/');
+define('UPLOAD_DIR', __DIR__ . '/../../uploads/');
 define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
 
 // Temp dir for payment status
-define('TEMP_DIR', __DIR__ . '/../temp/');
+define('TEMP_DIR', __DIR__ . '/../../temp/');
 
 // Ensure directories exist
 if (!is_dir(UPLOAD_DIR)) @mkdir(UPLOAD_DIR, 0755, true);

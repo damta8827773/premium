@@ -2,10 +2,10 @@
 $page_title = "Kelola Stok";
 $current_page = "admin-stok";
 $base_path = "../";
-require_once '../includes/head.php';
+require_once '../backend/includes/head.php';
 ?>
 <div class="flex h-screen overflow-hidden">
-  <?php require_once '../includes/admin-sidebar.php'; ?>
+  <?php require_once '../backend/includes/admin-sidebar.php'; ?>
   <div class="flex-1 flex flex-col overflow-hidden">
     <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3 flex-shrink-0">
       <button class="lg:hidden text-gray-500" onclick="toggleSidebar()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
@@ -42,7 +42,7 @@ require_once '../includes/head.php';
     </main>
   </div>
 </div>
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once '../backend/includes/footer.php'; ?>
 <script>
 let products = [];
 auth.onAuthStateChanged(async user => {

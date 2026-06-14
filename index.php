@@ -1,4 +1,4 @@
-<?php $page_title = "Premium App — Akun Premium Murah, Resmi & Bergaransi"; ?>
+<?php $page_title = "Premium App - Akun Premium Murah, Resmi & Bergaransi"; ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="assets/js/firebase-init.js"></script>
+<script src="frontend/assets/js/firebase-init.js"></script>
 <style>
 /* ══════════════════════════════════════
    ROOT
@@ -327,7 +327,7 @@ body::before{
 .pcard.popular .cbuy:hover{box-shadow:0 0 40px rgba(234,179,8,0.4)}
 
 /* ══════════════════════════════════════
-   BENEFITS — dark glass cards
+   BENEFITS - dark glass cards
 ══════════════════════════════════════ */
 #keunggulan{background:#050e07;padding:90px 28px;position:relative;overflow:hidden}
 .green-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(27,53,40,0.6),transparent 70%);pointer-events:none}
@@ -399,7 +399,7 @@ body::before{
 .fitem.open .fa{max-height:300px;padding:0 22px 18px}
 
 /* ══════════════════════════════════════
-   CTA — dark holographic
+   CTA - dark holographic
 ══════════════════════════════════════ */
 #cta{
   background:var(--bg);padding:110px 28px;text-align:center;
@@ -479,7 +479,7 @@ footer{background:#020804;padding:48px 28px 28px;border-top:1px solid rgba(234,1
       <span class="h1-line1">Aplikasi Premium</span>
       <span class="h1-line2">Harga Nggak Bikin Jebol</span>
     </div>
-    <p class="hero-sub">Canva Pro, Netflix, Spotify, YouTube Premium, CapCut — semua bergaransi resmi, harga jauh lebih hemat dari langganan langsung.</p>
+    <p class="hero-sub">Canva Pro, Netflix, Spotify, YouTube Premium, CapCut - semua bergaransi resmi, harga jauh lebih hemat dari langganan langsung.</p>
     <div class="hero-actions">
       <a href="register.php" class="btn-glow">Mulai Belanja <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg></a>
       <a href="#harga" class="btn-ghost">Lihat Harga</a>
@@ -639,7 +639,7 @@ footer{background:#020804;padding:48px 28px 28px;border-top:1px solid rgba(234,1
         ['Berapa lama setelah pembayaran?','Instan! Begitu bayar dan beli produk, kredensial akun langsung muncul di dashboard. Tidak perlu konfirmasi manual.'],
         ['Bagaimana sistem garansinya?','Setiap pembelian dilindungi garansi penuh. Akun bermasalah dalam masa garansi akan kami ganti tanpa biaya tambahan.'],
         ['Metode pembayaran apa saja?','Transfer bank (BCA, Mandiri, BNI, BRI), QRIS dari semua e-wallet dan m-banking, serta metode Midtrans lainnya.'],
-        ['Bisa dipakai di berapa perangkat?','Bergantung kebijakan masing-masing platform, biasanya 1–2 perangkat aktif bersamaan. Detail tertera di halaman produk.'],
+        ['Bisa dipakai di berapa perangkat?','Bergantung kebijakan masing-masing platform, biasanya 1-2 perangkat aktif bersamaan. Detail tertera di halaman produk.'],
       ] as $fi=>[$fq,$fa]):?>
       <div class="fitem" id="fi<?=$fi?>">
         <div class="fq" onclick="tFaq(<?=$fi?>)"><span><?=$fq?></span><svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
@@ -702,7 +702,7 @@ auth.onAuthStateChanged(async u=>{
 });
 
 /* ══════════════════════════════════════
-   CURSOR — glow dot with smooth lerp
+   CURSOR - glow dot with smooth lerp
 ══════════════════════════════════════ */
 const cur=document.getElementById('cur');
 const spot=document.getElementById('spotlight');

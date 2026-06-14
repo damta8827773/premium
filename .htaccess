@@ -17,7 +17,7 @@ RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^(.+)$ $1.php [L,QSA]
 
 # Security: block direct access to sensitive directories and files
-RewriteRule ^config/ - [F,L]
+RewriteRule ^backend/config/ - [F,L]
 RewriteRule ^temp/   - [F,L]
 RewriteRule ^\.      - [F,L]
 
@@ -46,7 +46,7 @@ RewriteRule ^\.      - [F,L]
   AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript text/javascript application/json
 </IfModule>
 
-# Protect uploads directory — allow image viewing but block PHP execution
+# Protect uploads directory - allow image viewing but block PHP execution
 <IfModule mod_rewrite.c>
   RewriteRule ^uploads/.*\.php$ - [F,L]
 </IfModule>

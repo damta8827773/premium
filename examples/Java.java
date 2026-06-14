@@ -1,11 +1,11 @@
-// Create a Premium Store deposit transaction — Java (11+)
+// Create a Premium Store deposit transaction - Java (11+)
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class Java {
-    static final String API_URL = "https://yourdomain.com/api/midtrans-create.php";
+    static final String API_URL = "https://yourdomain.com/backend/api/midtrans-create.php";
 
     public static void main(String[] args) throws Exception {
         String orderId = "DEP-" + (System.currentTimeMillis() / 1000);

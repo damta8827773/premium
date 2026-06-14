@@ -1,5 +1,5 @@
-# Create a Premium Store deposit transaction — PowerShell
-$apiUrl = "https://yourdomain.com/api/midtrans-create.php"
+# Create a Premium Store deposit transaction - PowerShell
+$apiUrl = "https://yourdomain.com/backend/api/midtrans-create.php"
 
 $payload = @{
     order_id = "DEP-$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())"

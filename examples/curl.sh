@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Create a Premium Store deposit transaction — Bash + curl
+# Create a Premium Store deposit transaction - Bash + curl
 set -euo pipefail
 
-API_URL="https://yourdomain.com/api/midtrans-create.php"
+API_URL="https://yourdomain.com/backend/api/midtrans-create.php"
 ORDER_ID="DEP-$(date +%s)"
 
 curl -sS -X POST "$API_URL" \

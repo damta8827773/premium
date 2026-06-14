@@ -2,10 +2,10 @@
 $page_title   = "Tools OTP & Invite";
 $current_page = "otp";
 $base_path    = "";
-require_once 'includes/head.php';
+require_once 'backend/includes/head.php';
 ?>
 <div class="flex h-screen overflow-hidden">
-  <?php require_once 'includes/buyer-sidebar.php'; ?>
+  <?php require_once 'backend/includes/buyer-sidebar.php'; ?>
   <div class="flex-1 flex flex-col overflow-hidden">
     <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3 flex-shrink-0">
       <button class="lg:hidden text-gray-500" onclick="toggleSidebar()">
@@ -119,7 +119,7 @@ require_once 'includes/head.php';
   </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once 'backend/includes/footer.php'; ?>
 <script>
 const guides = {
   canva:   'Buka Canva → Akun → Login. Masukkan email akun, pilih "Kirim Email". Laporkan ke admin untuk forward OTP.',

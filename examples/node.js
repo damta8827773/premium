@@ -1,5 +1,5 @@
-// Create a Premium Store deposit transaction — Node.js (18+)
-const API_URL = "https://yourdomain.com/api/midtrans-create.php";
+// Create a Premium Store deposit transaction - Node.js (18+)
+const API_URL = "https://yourdomain.com/backend/api/midtrans-create.php";
 
 const payload = {
   order_id: `DEP-${Date.now()}`,

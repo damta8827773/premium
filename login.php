@@ -1,4 +1,4 @@
-<?php $page_title = "Masuk — Premium App"; ?>
+<?php $page_title = "Masuk - Premium App"; ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -12,7 +12,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
-<script src="assets/js/firebase-init.js"></script>
+<script src="frontend/assets/js/firebase-init.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; display: flex; -webkit-font-smoothing: antialiased; }
@@ -250,7 +250,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; display:
 
     <!-- Google login -->
     <button onclick="loginWithGoogle()" id="btn-google" class="btn-google" style="margin-bottom:4px">
-      <img src="image/Google.png" alt="Google" style="width:20px;height:20px;object-fit:contain">
+      <img src="frontend/image/Google.png" alt="Google" style="width:20px;height:20px;object-fit:contain">
       Masuk dengan Google
     </button>
 
@@ -366,7 +366,7 @@ async function loginWithGoogle() {
   } catch(err) {
     if (err.code !== 'auth/popup-closed-by-user') showToast('Login Google gagal. Coba lagi.');
     btn.disabled = false;
-    btn.innerHTML = '<img src="image/Google.png" style="width:20px;height:20px;object-fit:contain"> Masuk dengan Google';
+    btn.innerHTML = '<img src="frontend/image/Google.png" style="width:20px;height:20px;object-fit:contain"> Masuk dengan Google';
   }
 }
 </script>

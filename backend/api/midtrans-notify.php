@@ -1,7 +1,7 @@
 <?php
 /**
  * Midtrans Payment Notification Webhook
- * URL: https://yourdomain.com/api/midtrans-notify.php
+ * URL: https://yourdomain.com/backend/api/midtrans-notify.php
  * Set this in Midtrans Dashboard → Settings → Configuration → Payment Notification URL
  */
 

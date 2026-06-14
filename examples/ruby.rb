@@ -1,9 +1,9 @@
-# Create a Premium Store deposit transaction — Ruby
+# Create a Premium Store deposit transaction - Ruby
 require "net/http"
 require "json"
 require "uri"
 
-API_URL = "https://yourdomain.com/api/midtrans-create.php"
+API_URL = "https://yourdomain.com/backend/api/midtrans-create.php"
 
 payload = {
   order_id: "DEP-#{Time.now.to_i}",

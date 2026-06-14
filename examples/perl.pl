@@ -1,11 +1,11 @@
 #!/usr/bin/env perl
-# Create a Premium Store deposit transaction — Perl
+# Create a Premium Store deposit transaction - Perl
 use strict;
 use warnings;
 use HTTP::Tiny;
 use JSON::PP;
 
-my $api_url = "https://yourdomain.com/api/midtrans-create.php";
+my $api_url = "https://yourdomain.com/backend/api/midtrans-create.php";
 
 my $payload = encode_json({
     order_id => "DEP-" . time(),

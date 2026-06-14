@@ -1,6 +1,6 @@
 <?php
-// Create a Premium Store deposit transaction — PHP
-$apiUrl = "https://yourdomain.com/api/midtrans-create.php";
+// Create a Premium Store deposit transaction - PHP
+$apiUrl = "https://yourdomain.com/backend/api/midtrans-create.php";
 
 $payload = [
     "order_id" => "DEP-" . time(),

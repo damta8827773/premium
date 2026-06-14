@@ -1,7 +1,7 @@
-// Create a Premium Store deposit transaction — Swift
+// Create a Premium Store deposit transaction - Swift
 import Foundation
 
-let apiURL = URL(string: "https://yourdomain.com/api/midtrans-create.php")!
+let apiURL = URL(string: "https://yourdomain.com/backend/api/midtrans-create.php")!
 
 let payload: [String: Any] = [
     "order_id": "DEP-\(Int(Date().timeIntervalSince1970))",

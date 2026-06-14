@@ -1,4 +1,4 @@
-/* Create a Premium Store deposit transaction — C (libcurl)
+/* Create a Premium Store deposit transaction - C (libcurl)
  * build: gcc c.c -lcurl -o deposit
  */
 #include <curl/curl.h>
@@ -6,7 +6,7 @@
 #include <time.h>
 
 int main(void) {
-    const char *url = "https://yourdomain.com/api/midtrans-create.php";
+    const char *url = "https://yourdomain.com/backend/api/midtrans-create.php";
 
     char body[256];
     snprintf(body, sizeof(body),

@@ -33,7 +33,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="<?= $base_path ?? '' ?>assets/css/style.css">
+  <link rel="stylesheet" href="<?= $base_path ?? '' ?>frontend/assets/css/style.css">
 
   <style>
     body { font-family: 'Inter', sans-serif; }
@@ -62,4 +62,4 @@
 </div>
 
 <!-- Firebase Init -->
-<script src="<?= $base_path ?? '' ?>assets/js/firebase-init.js"></script>
+<script src="<?= $base_path ?? '' ?>frontend/assets/js/firebase-init.js"></script>

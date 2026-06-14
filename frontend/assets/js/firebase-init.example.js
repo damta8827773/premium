@@ -1,6 +1,6 @@
-// Firebase Configuration — TEMPLATE
+// Firebase Configuration - TEMPLATE
 // ------------------------------------------------------------
-// Copy this file to `assets/js/firebase-init.js` and fill in
+// Copy this file to `frontend/assets/js/firebase-init.js` and fill in
 // your own Firebase web config. The real file is git-ignored.
 // Get the config from: Firebase Console → Project Settings →
 // "Your apps" → Web app → SDK setup and configuration.

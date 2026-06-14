@@ -1,9 +1,9 @@
-# Create a Premium Store deposit transaction — Elixir
-# Uses :httpc / :json from the standard runtime — no external deps.
+# Create a Premium Store deposit transaction - Elixir
+# Uses :httpc / :json from the standard runtime - no external deps.
 :inets.start()
 :ssl.start()
 
-api_url = ~c"https://yourdomain.com/api/midtrans-create.php"
+api_url = ~c"https://yourdomain.com/backend/api/midtrans-create.php"
 
 payload =
   %{

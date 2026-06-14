@@ -1,11 +1,11 @@
-// Create a Premium Store deposit transaction — Kotlin
+// Create a Premium Store deposit transaction - Kotlin
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 fun main() {
-    val apiUrl = "https://yourdomain.com/api/midtrans-create.php"
+    val apiUrl = "https://yourdomain.com/backend/api/midtrans-create.php"
     val orderId = "DEP-${System.currentTimeMillis() / 1000}"
 
     val body = """

@@ -2,11 +2,11 @@
 $page_title = "Dashboard";
 $current_page = "dashboard";
 $base_path = "";
-require_once 'includes/head.php';
+require_once 'backend/includes/head.php';
 ?>
 
 <div class="flex h-screen overflow-hidden">
-  <?php require_once 'includes/buyer-sidebar.php'; ?>
+  <?php require_once 'backend/includes/buyer-sidebar.php'; ?>
 
   <!-- Main -->
   <div class="flex-1 flex flex-col overflow-hidden">
@@ -133,7 +133,7 @@ require_once 'includes/head.php';
   </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once 'backend/includes/footer.php'; ?>
 <script>
 // Auth check
 auth.onAuthStateChanged(async user => {

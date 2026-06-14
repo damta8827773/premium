@@ -1,8 +1,8 @@
-// Create a Premium Store deposit transaction — C# (.NET)
+// Create a Premium Store deposit transaction - C# (.NET)
 using System.Text;
 using System.Text.Json;
 
-const string apiUrl = "https://yourdomain.com/api/midtrans-create.php";
+const string apiUrl = "https://yourdomain.com/backend/api/midtrans-create.php";
 
 var payload = new
 {
