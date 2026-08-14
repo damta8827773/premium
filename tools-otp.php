@@ -13,7 +13,7 @@ require_once 'backend/includes/head.php';
       </button>
       <h1 class="text-xl font-bold text-gray-800">Tools OTP & Invite</h1>
     </header>
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <main class="flex-1 overflow-y-auto p-6 bg-app">
 
       <!-- Tabs -->
       <div class="flex gap-3 mb-6">
@@ -23,7 +23,7 @@ require_once 'backend/includes/head.php';
 
       <!-- OTP Tab -->
       <div id="tab-otp">
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 max-w-md">
+        <div class="card-premium p-6 max-w-md">
           <div class="flex items-center gap-3 mb-5">
             <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
               <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -73,7 +73,7 @@ require_once 'backend/includes/head.php';
 
       <!-- Invite Tab -->
       <div id="tab-invite" class="hidden">
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 max-w-md">
+        <div class="card-premium p-6 max-w-md">
           <div class="flex items-center gap-3 mb-5">
             <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
               <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>

@@ -11,13 +11,14 @@ require_once 'backend/includes/head.php';
       <button class="lg:hidden text-gray-500" onclick="toggleSidebar()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       <h1 class="text-xl font-bold text-gray-800">Riwayat Saldo</h1>
     </header>
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <main class="flex-1 overflow-y-auto p-6 bg-app">
       <div class="max-w-2xl mx-auto space-y-5">
         <!-- Balance Card -->
         <div class="balance-card">
-          <p class="text-white/60 text-xs font-medium mb-1">SALDO SAAT INI</p>
-          <p id="user-balance" class="text-3xl font-bold text-gold">Rp 0</p>
-          <div class="grid grid-cols-3 gap-4 mt-4">
+          <div class="shimmer"></div>
+          <p class="text-white/60 text-xs font-medium mb-1 relative">SALDO SAAT INI</p>
+          <p id="user-balance" class="text-3xl font-bold text-gold relative">Rp 0</p>
+          <div class="grid grid-cols-3 gap-4 mt-4 relative">
             <div><p class="text-white/50 text-xs">TOTAL TRANSAKSI</p><p id="stat-total" class="text-white font-bold text-lg">0</p></div>
             <div><p class="text-white/50 text-xs">TOTAL MASUK</p><p id="stat-in" class="text-green-400 font-bold text-lg">+Rp 0</p></div>
             <div><p class="text-white/50 text-xs">TOTAL KELUAR</p><p id="stat-out" class="text-red-400 font-bold text-lg">-Rp 0</p></div>
@@ -72,7 +73,7 @@ function setFilter(f, btn) {
 function renderHistory() {
   const filtered = currentFilter === 'semua' ? allHistory : allHistory.filter(h => h.type === currentFilter);
   if (!filtered.length) {
-    document.getElementById('history-list').innerHTML = `<div class="text-center py-14 bg-white rounded-2xl border border-gray-100">
+    document.getElementById('history-list').innerHTML = `<div class="text-center py-14 card-premium">
       <svg class="w-14 h-14 mx-auto mb-3 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
       <p class="text-gray-500 font-medium">Belum Ada Transaksi</p>
       <p class="text-gray-400 text-sm mt-1">Mulai deposit saldo untuk belanja lebih mudah</p>
@@ -81,7 +82,7 @@ function renderHistory() {
     return;
   }
   const iconMap = { deposit:'💰', topup:'⬆️', voucher:'🎟️', pembelian:'🛒', refund:'↩️', adjustment:'⚙️' };
-  document.getElementById('history-list').innerHTML = `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-50">
+  document.getElementById('history-list').innerHTML = `<div class="card-premium divide-y divide-gray-50">
     ${filtered.map(h => {
       const isIn = h.amount > 0;
       const d = h.created_at ? new Date(h.created_at.seconds*1000).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-';

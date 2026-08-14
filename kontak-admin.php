@@ -14,11 +14,11 @@ require_once 'backend/includes/head.php';
         <p class="text-xs text-gray-400">Hubungi admin untuk bantuan</p>
       </div>
     </header>
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <main class="flex-1 overflow-y-auto p-6 bg-app">
       <div class="max-w-xl mx-auto space-y-4">
 
         <!-- Admin 1 -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center justify-between">
+        <div class="card-premium p-5 flex items-center justify-between">
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg flex-shrink-0">AD</div>
             <div>
@@ -33,7 +33,7 @@ require_once 'backend/includes/head.php';
         </div>
 
         <!-- Admin 2 -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center justify-between">
+        <div class="card-premium p-5 flex items-center justify-between">
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg flex-shrink-0">CS</div>
             <div>

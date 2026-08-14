@@ -11,13 +11,14 @@ require_once 'backend/includes/head.php';
       <button class="lg:hidden text-gray-500" onclick="toggleSidebar()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       <h1 class="text-xl font-bold text-gray-800">Redeem Voucher</h1>
     </header>
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <main class="flex-1 overflow-y-auto p-6 bg-app">
       <div class="max-w-xl mx-auto space-y-5">
         <div class="balance-card">
-          <p class="text-white/60 text-xs mb-1">SALDO KAMU</p>
-          <p id="user-balance" class="text-3xl font-bold text-white">Rp 0</p>
+          <div class="shimmer"></div>
+          <p class="text-white/60 text-xs mb-1 relative">SALDO KAMU</p>
+          <p id="user-balance" class="text-3xl font-bold text-white relative">Rp 0</p>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div class="card-premium p-6">
           <h2 class="font-bold text-gray-800 mb-1">Masukkan Kode Voucher</h2>
           <p class="text-sm text-gray-400 mb-4">Masukkan kode voucher yang kamu punya untuk mendapatkan saldo gratis.</p>
           <div class="flex gap-3">
@@ -25,7 +26,7 @@ require_once 'backend/includes/head.php';
             <button onclick="redeemVoucher()" id="btn-redeem" class="btn-primary px-5 flex-shrink-0">Redeem</button>
           </div>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="card-premium p-5">
           <h3 class="font-bold text-gray-800 mb-4">Riwayat Redeem</h3>
           <div id="redeem-history">
             <div class="text-center py-8">

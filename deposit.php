@@ -14,14 +14,15 @@ require_once 'backend/includes/head.php';
       </button>
       <h1 class="text-xl font-bold text-gray-800">Deposit Saldo</h1>
     </header>
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <main class="flex-1 overflow-y-auto p-6 bg-app">
       <div class="max-w-2xl mx-auto space-y-5">
 
         <!-- Balance Card -->
         <div class="balance-card">
-          <p class="text-white/60 text-xs font-medium mb-1">SALDO KAMU</p>
-          <p id="user-balance" class="text-3xl font-bold text-white">Rp 0</p>
-          <a href="riwayat-saldo.php" class="inline-block mt-3 text-white/60 text-xs hover:text-white transition-colors">Lihat riwayat →</a>
+          <div class="shimmer"></div>
+          <p class="text-white/60 text-xs font-medium mb-1 relative">SALDO KAMU</p>
+          <p id="user-balance" class="text-3xl font-bold text-white relative">Rp 0</p>
+          <a href="riwayat-saldo.php" class="inline-block mt-3 text-white/60 text-xs hover:text-white transition-colors relative">Lihat riwayat →</a>
         </div>
 
         <!-- Info -->
@@ -31,7 +32,7 @@ require_once 'backend/includes/head.php';
         </div>
 
         <!-- Method Selector -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="card-premium p-5">
           <p class="font-bold text-gray-800 mb-4">Pilih Metode Pembayaran</p>
           <div class="grid grid-cols-2 gap-3">
             <label class="method-option cursor-pointer">
@@ -54,7 +55,7 @@ require_once 'backend/includes/head.php';
         </div>
 
         <!-- Amount -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="card-premium p-5">
           <p class="font-bold text-gray-800 mb-4">Pilih Nominal</p>
           <div class="grid grid-cols-3 gap-2 mb-4">
             <?php foreach([10000,25000,50000,100000,200000,500000] as $amt): ?>
@@ -70,7 +71,7 @@ require_once 'backend/includes/head.php';
         </div>
 
         <!-- Manual upload (hidden by default) -->
-        <div id="manual-section" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hidden">
+        <div id="manual-section" class="card-premium p-5 hidden">
           <p class="font-bold text-gray-800 mb-3">QRIS untuk Pembayaran Manual</p>
           <div class="grid grid-cols-2 gap-4 mb-4">
             <div class="text-center">

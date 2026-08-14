@@ -11,7 +11,7 @@ require_once 'backend/includes/head.php';
       <button class="lg:hidden text-gray-500" onclick="toggleSidebar()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       <h1 class="text-xl font-bold text-gray-800">Claim Garansi</h1>
     </header>
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <main class="flex-1 overflow-y-auto p-6 bg-app">
       <div class="bg-primary text-white rounded-2xl p-5 flex gap-3 mb-5">
         <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
         <div><p class="font-bold mb-0.5">Claim Garansi</p><p class="text-white/80 text-sm">Laporkan masalah pada akun yang kamu beli. Tim kami akan segera memproses laporan kamu.</p></div>
@@ -103,21 +103,19 @@ function setStatusFilter(f, btn) { statusFilter=f; document.querySelectorAll('.t
 function renderClaims() {
   const filtered = allClaims.filter(c => (typeFilter==='semua'||c.type===typeFilter) && (statusFilter==='semua'||c.status===statusFilter));
   if (!filtered.length) {
-    document.getElementById('claims-list').innerHTML = `<div class="text-center py-14 bg-white rounded-2xl border border-gray-100">
+    document.getElementById('claims-list').innerHTML = `<div class="text-center py-14 card-premium">
       <svg class="w-14 h-14 mx-auto mb-3 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
       <p class="text-gray-500 font-medium">Belum ada report.</p>
       <p class="text-gray-400 text-sm mt-1">Klik "Buat Report" untuk melaporkan masalah.</p>
     </div>`;
     return;
   }
-  const statusMap = { menunggu:['bg-yellow-100 text-yellow-700','Menunggu'], diproses:['bg-blue-100 text-blue-700','Diproses'], selesai:['bg-green-100 text-green-700','Selesai'], ditolak:['bg-red-100 text-red-600','Ditolak'] };
   const typeMap = { error:'Error', canva:'Canva', renewal:'Renewal' };
   document.getElementById('claims-list').innerHTML = `<div class="space-y-3">${filtered.map(c => {
-    const [sc,sl] = statusMap[c.status] || ['bg-gray-100 text-gray-500',c.status];
     const d = c.created_at ? new Date(c.created_at.seconds*1000).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}) : '-';
-    return `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+    return `<div class="card-premium p-5">
       <div class="flex justify-between items-start mb-2">
-        <div><span class="text-xs bg-gray-100 text-gray-600 font-semibold px-2 py-0.5 rounded mr-2">${typeMap[c.type]||c.type}</span><span class="text-xs font-semibold px-2 py-0.5 rounded-lg ${sc}">${sl}</span></div>
+        <div><span class="text-xs bg-gray-100 text-gray-600 font-semibold px-2 py-0.5 rounded mr-2">${typeMap[c.type]||c.type}</span>${statusBadge(c.status)}</div>
         <span class="text-xs text-gray-400">${d}</span>
       </div>
       <p class="text-sm text-gray-700 mt-2">${c.description||'-'}</p>

@@ -25,11 +25,11 @@ require_once 'backend/includes/head.php';
       </a>
     </header>
 
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <main class="flex-1 overflow-y-auto p-6 bg-app">
       <!-- Search -->
       <div class="relative mb-5">
         <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="search" placeholder="Cari produk ..." class="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-3 bg-white text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" oninput="filterProducts()">
+        <input type="text" id="search" placeholder="Cari produk ..." class="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-3 bg-white text-sm shadow-sm focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-shadow" oninput="filterProducts()">
       </div>
 
       <!-- Category Tabs -->
@@ -47,7 +47,7 @@ require_once 'backend/includes/head.php';
       <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         <!-- Loading skeleton -->
         <?php for($i=0;$i<10;$i++): ?>
-        <div class="bg-white rounded-2xl p-3 animate-pulse border border-gray-100">
+        <div class="card-premium p-3 animate-pulse">
           <div class="bg-gray-200 rounded-xl h-28 mb-3"></div>
           <div class="bg-gray-200 h-4 rounded mb-2"></div>
           <div class="bg-gray-200 h-3 rounded w-2/3"></div>
@@ -68,7 +68,7 @@ require_once 'backend/includes/head.php';
   <div class="modal-box max-w-lg">
     <div class="flex items-start justify-between mb-4">
       <div class="flex items-center gap-3">
-        <div id="modal-img-wrap" class="w-14 h-14 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0"></div>
+        <div id="modal-img-wrap" class="w-14 h-14 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0 ring-1 ring-gray-100 shadow-sm"></div>
         <div>
           <div id="modal-badge" class="text-xs font-bold text-black bg-gold px-2 py-0.5 rounded mb-1 inline-block"></div>
           <h2 id="modal-name" class="text-lg font-bold text-gray-800"></h2>
@@ -200,13 +200,14 @@ function renderProducts() {
     }
     if (p.image) imgHtml = `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-contain p-3" onerror="this.parentElement.innerHTML='<span class=text-primary font-bold text-xl>${p.name.charAt(0)}</span>'">`;
 
-    return `<div class="product-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm cursor-pointer" onclick="openProduct('${p.id}')">
-      ${p.badge ? `<div class="bg-gold px-2 py-1"><p class="text-black text-xs font-bold uppercase tracking-wide truncate">${p.badge}</p></div>` : ''}
+    const stockColor = totalStock <= 0 ? 'text-red-500' : totalStock <= 5 ? 'text-amber-600' : 'text-gray-400';
+    return `<div class="card-premium overflow-hidden cursor-pointer" onclick="openProduct('${p.id}')">
+      ${p.badge ? `<div class="bg-gradient-to-r from-gold to-gold-light px-2 py-1"><p class="text-black text-xs font-bold uppercase tracking-wide truncate">${p.badge}</p></div>` : ''}
       <div class="h-28 bg-gray-50 flex items-center justify-center overflow-hidden">${imgHtml}</div>
       <div class="p-3">
         <p class="text-sm font-bold text-gray-800 truncate">${p.name}</p>
         <p class="text-xs font-semibold text-primary mt-0.5">${priceText}</p>
-        <p class="text-xs text-gray-400 mt-0.5">Stok: ${totalStock}</p>
+        <p class="text-xs font-medium mt-0.5 ${stockColor}">Stok: ${totalStock}</p>
       </div>
     </div>`;
   }).join('');

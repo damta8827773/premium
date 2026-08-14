@@ -50,8 +50,9 @@
     .toast.show { transform:translateX(0); }
     .spinner { border:3px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; width:20px; height:20px; animation:spin 0.7s linear infinite; display:inline-block; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; display:flex; align-items:center; justify-content:center; }
-    .modal-box { background:white; border-radius:16px; padding:24px; max-width:480px; width:90%; max-height:90vh; overflow-y:auto; }
+    .modal-overlay { position:fixed; inset:0; background:rgba(2,8,4,0.55); backdrop-filter: blur(2px); z-index:1000; display:flex; align-items:center; justify-content:center; }
+    .modal-box { background:white; border-radius:18px; padding:24px; max-width:480px; width:90%; max-height:90vh; overflow-y:auto; box-shadow: 0 24px 48px -12px rgba(0,0,0,0.35); }
+    #toast-inner { box-shadow: 0 12px 28px -8px rgba(0,0,0,0.3); }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
