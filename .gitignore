@@ -3,6 +3,7 @@
 # ============================================================
 # Real credentials (Midtrans server key, Firebase, WhatsApp, etc.)
 backend/config/app.php
+backend/config/firebase-service-account.json
 frontend/assets/js/firebase-init.js
 
 # Hidden security monitoring - never publish detection logic/thresholds

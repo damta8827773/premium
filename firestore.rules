@@ -8,28 +8,17 @@ rules_version = '2';
  * firestore:rules` if you have firebase-tools set up; there's no
  * firebase.json in this repo yet).
  *
- * IMPORTANT - two known gaps these rules deliberately do NOT close,
- * because closing them properly needs server-side infrastructure this
- * project doesn't have yet (no Cloud Functions, no Firebase Admin SDK on
- * the PHP side). Flagged in chat as findings, not silently patched here:
- *
- *  1. `users/{uid}.balance` stays writable by its own owner, because
- *     deposit.php and redeem.php currently credit balance directly from
- *     the client after a payment/voucher check. A user could still set
- *     their own balance to any value via the browser console. Closing
- *     this for real requires balance credits to happen through a
- *     privileged server identity (Cloud Function or Admin-SDK-backed PHP
- *     endpoint) instead of the client.
- *  2. `stock_items.content` (the actual delivered account credentials)
- *     is reachable by any signed-in buyer's Firestore query today,
- *     because toko.php reads a stock item directly client-side to
- *     complete a purchase. There is no per-field redaction in Firestore
- *     rules, so anyone signed in can currently query unsold stock and
- *     read the credentials of accounts they haven't bought. This is the
- *     same underlying gap as #1 (no privileged fulfillment path) and is
- *     the most severe finding of this pass - fixing it means moving
- *     purchase fulfillment behind a Cloud Function/Admin-SDK endpoint
- *     that never exposes the stock_items collection to clients directly.
+ * Balance crediting and stock_items access now go entirely through
+ * server-side endpoints authenticated as a service account (see
+ * backend/includes/firestore-rest.php, backend/api/checkout.php,
+ * backend/api/redeem-voucher.php, and the deposit-crediting step added to
+ * backend/api/midtrans-notify.php) - that identity bypasses these rules
+ * entirely, same as the Admin SDK/Cloud Functions would. Deploy the
+ * server-side endpoints FIRST and confirm they work before publishing
+ * this version of the rules: the old client-side writes to balance,
+ * stock_items, orders, deposits.status, voucher_uses, and balance_history
+ * are denied below, so publishing this first would break checkout/
+ * deposit/redeem immediately.
  */
 
 service cloud.firestore {
@@ -57,14 +46,16 @@ service cloud.firestore {
             get(/databases/$(database)/documents/reseller_tokens/$(request.resource.data.reseller_token)).data.is_active == true
           )
         );
-      // Owner can update their own profile fields (name/phone/username/balance -
-      // see gap #1 above) but can never change role, is_reseller, or uid
-      // themselves. Only an admin can.
+      // Owner can update their own profile fields (name/phone/username) but
+      // never role, is_reseller, uid, or balance themselves - balance is
+      // now only ever changed by the service account (checkout.php,
+      // redeem-voucher.php, midtrans-notify.php) or an admin.
       allow update: if isAdmin() || (
         isOwner(uid) &&
         request.resource.data.role == resource.data.role &&
         request.resource.data.is_reseller == resource.data.is_reseller &&
-        request.resource.data.uid == resource.data.uid
+        request.resource.data.uid == resource.data.uid &&
+        request.resource.data.balance == resource.data.balance
       );
       allow delete: if isAdmin();
     }
@@ -94,12 +85,11 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // See gap #2 above - kept to signed-in users (not fully public) as a
-    // floor, but this does not stop a signed-in buyer from reading
-    // unsold accounts' `content` today.
+    // Holds the actual delivered account credentials (`content`) - never
+    // client-readable. checkout.php (service account) is the only path
+    // that ever reads or claims one now.
     match /stock_items/{id} {
-      allow read: if isSignedIn();
-      allow write: if isAdmin();
+      allow read, write: if isAdmin();
     }
 
     match /announcements/{id} {
@@ -113,10 +103,10 @@ service cloud.firestore {
     }
 
     // ---- user-owned records (all keyed by a user_id field) ----
+    // checkout.php (service account) creates orders now - the client only reads its own.
     match /orders/{id} {
       allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
-      allow create: if isSignedIn() && request.resource.data.user_id == request.auth.uid;
-      allow update, delete: if isAdmin();
+      allow create, update, delete: if isAdmin();
     }
 
     match /warranties/{id} {
@@ -131,28 +121,31 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // Owner may only ever create a deposit as 'pending' (deposit.php does
+    // this before redirecting to Midtrans/uploading manual proof). The
+    // transition to 'success' is server-only: midtrans-notify.php for
+    // Midtrans deposits, an admin approving a manual one.
     match /deposits/{id} {
-      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
-      allow create: if isSignedIn() && request.resource.data.user_id == request.auth.uid;
-      allow update: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid); // see gap #1
-      allow delete: if false;
-    }
-
-    match /balance_history/{id} {
-      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
-      allow create: if isSignedIn() && request.resource.data.user_id == request.auth.uid;
-      allow update, delete: if false; // append-only ledger
-    }
-
-    // Deterministic doc ID ({voucherCode}_{uid}, see redeem.php) turns the
-    // double-redeem check into an atomic rule instead of a racy client
-    // read-then-write.
-    match /voucher_uses/{id} {
       allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
       allow create: if isSignedIn()
         && request.resource.data.user_id == request.auth.uid
-        && id == (request.resource.data.voucher_code + '_' + request.auth.uid);
-      allow update, delete: if false;
+        && request.resource.data.status == 'pending';
+      allow update, delete: if isAdmin();
+    }
+
+    // Server-only now (checkout.php / redeem-voucher.php / midtrans-notify.php) - append-only ledger.
+    match /balance_history/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Server-only now (redeem-voucher.php) - the deterministic {code}_{uid}
+    // doc ID is still what makes double-redeem impossible (create fails if
+    // the doc already exists), enforced there via a precondition instead
+    // of a client-facing rule.
+    match /voucher_uses/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
+      allow create, update, delete: if isAdmin();
     }
 
     // ---- live chat ----

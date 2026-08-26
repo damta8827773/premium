@@ -292,52 +292,19 @@ async function processBuy() {
   btn.innerHTML = '<span class="spinner"></span> Memproses...';
 
   try {
-    // Get a stock item
-    const stockSnap = await db.collection('stock_items')
-      .where('variant_id','==',selectedVariant.id)
-      .where('is_used','==',false)
-      .limit(1).get();
-
-    if (stockSnap.empty) { showToast('Stok habis!','error'); btn.disabled=false; btn.innerHTML='Beli Sekarang'; return; }
-
-    const stockDoc = stockSnap.docs[0];
-    const invoice = generateInvoice();
-
-    // Transaction: deduct balance, create order, mark stock as used
-    await db.runTransaction(async t => {
-      const userRef = db.collection('users').doc(currentUser.uid);
-      const userSnap = await t.get(userRef);
-      const currentBalance = userSnap.data().balance || 0;
-      if (currentBalance < selectedVariant.price) throw new Error('Saldo tidak cukup');
-
-      const orderRef = db.collection('orders').doc();
-      const stockRef = db.collection('stock_items').doc(stockDoc.id);
-
-      const variantRef = db.collection('products').doc(selectedProduct.id).collection('variants').doc(selectedVariant.id);
-      const variantSnap = await t.get(variantRef);
-      const currStock = variantSnap.data().stock || 0;
-
-      t.update(userRef, { balance: currentBalance - selectedVariant.price });
-      t.set(orderRef, {
-        id: orderRef.id, invoice, user_id: currentUser.uid,
-        product_id: selectedProduct.id, product_name: selectedProduct.name,
-        variant_id: selectedVariant.id, variant_name: selectedVariant.name,
-        price: selectedVariant.price, status: 'selesai',
-        stock_item_id: stockDoc.id, stock_content: stockDoc.data().content,
-        created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        completed_at: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      t.update(stockRef, { is_used: true, order_id: orderRef.id });
-      t.update(variantRef, { stock: Math.max(0, currStock - 1) });
-      t.set(db.collection('balance_history').doc(), {
-        user_id: currentUser.uid, type: 'pembelian',
-        amount: -selectedVariant.price,
-        description: `Pembelian ${selectedProduct.name} - ${selectedVariant.name}`,
-        created_at: firebase.firestore.FieldValue.serverTimestamp()
-      });
+    // Fulfillment happens server-side now (backend/api/checkout.php) - the
+    // browser never reads stock_items or writes balance directly anymore,
+    // see firestore.rules.
+    const idToken = await currentUser.getIdToken();
+    const res = await fetch('backend/api/checkout.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify({ product_id: selectedProduct.id, variant_id: selectedVariant.id }),
     });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || 'Gagal memproses pembelian.');
 
-    userBalance -= selectedVariant.price;
+    userBalance = data.new_balance;
     document.getElementById('topbar-balance').textContent = 'Rp ' + userBalance.toLocaleString('id-ID');
 
     closeModal();
@@ -351,11 +318,5 @@ async function processBuy() {
 function closeModal() {
   document.getElementById('modal-product').classList.add('hidden');
   selectedVariant = null; selectedProduct = null;
-}
-
-function generateInvoice() {
-  const d = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  return 'INV'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds())+Math.floor(Math.random()*1000);
 }
 </script>

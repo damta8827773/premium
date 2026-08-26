@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 require_once '../config/app.php';
+require_once __DIR__ . '/../includes/auth-helper.php';
 if (file_exists(__DIR__ . '/../includes/security-monitor.php')) {
     require_once __DIR__ . '/../includes/security-monitor.php';
 }
@@ -50,30 +51,8 @@ if (mb_strlen($message) > 2000) {
 }
 
 // ---- Verify the Firebase ID token (no Admin SDK available server-side) ----
-$auth_header = $_SERVER['HTTP_AUTHORIZATION'] ?? ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '');
-if (!preg_match('/^Bearer\s+(.+)$/i', $auth_header, $m)) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Missing authorization']);
-    exit;
-}
-$id_token = $m[1];
-
-$verify_ch = curl_init('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' . urlencode(FIREBASE_WEB_API_KEY));
-curl_setopt_array($verify_ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST           => true,
-    CURLOPT_POSTFIELDS     => json_encode(['idToken' => $id_token]),
-    CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
-    CURLOPT_TIMEOUT        => 15,
-]);
-$verify_response  = curl_exec($verify_ch);
-$verify_http_code = curl_getinfo($verify_ch, CURLINFO_HTTP_CODE);
-curl_close($verify_ch);
-
-$verify_data = json_decode($verify_response, true);
-$uid = $verify_data['users'][0]['localId'] ?? null;
-
-if ($verify_http_code !== 200 || !$uid) {
+$uid = verify_firebase_id_token();
+if (!$uid) {
     if (function_exists('security_log')) security_log('invalid_id_token', 'medium', ['chat_id' => $chat_id]);
     http_response_code(401);
     echo json_encode(['error' => 'Sesi tidak valid, silakan login ulang.']);

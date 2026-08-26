@@ -61,8 +61,11 @@ async function loadStock() {
       p.variants = [];
       for (const v of vSnap.docs) {
         const vd = { id: v.id, ...v.data() };
-        const stockSnap = await db.collection('stock_items').where('variant_id','==',v.id).where('is_used','==',false).get();
-        vd.available_stock = stockSnap.size;
+        // Uses the variant's own stock counter (same one toko.php's catalog
+        // shows) instead of querying stock_items directly - that collection
+        // holds the actual delivered account credentials and is admin-only
+        // to read now, see firestore.rules.
+        vd.available_stock = vd.stock || 0;
         p.variants.push(vd);
       }
       allStockData.push(p);

@@ -70,29 +70,19 @@ async function redeemVoucher() {
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
 
   try {
-    const vSnap = await db.collection('vouchers').doc(code).get();
-    if (!vSnap.exists) throw new Error('Kode voucher tidak valid');
-    const v = vSnap.data();
-    if (!v.is_active) throw new Error('Voucher sudah tidak aktif');
-    if (v.used_count >= v.max_uses) throw new Error('Voucher sudah habis digunakan');
-
-    // Check if user already used this voucher
-    const usedSnap = await db.collection('voucher_uses').where('user_id','==',currentUser.uid).where('voucher_code','==',code).get();
-    if (!usedSnap.empty) throw new Error('Kamu sudah pernah menggunakan voucher ini');
-
-    await db.runTransaction(async t => {
-      const vRef = db.collection('vouchers').doc(code);
-      const uRef = db.collection('users').doc(currentUser.uid);
-      t.update(vRef, { used_count: firebase.firestore.FieldValue.increment(1) });
-      t.update(uRef, { balance: firebase.firestore.FieldValue.increment(v.amount) });
-      // Deterministic doc ID so the Firestore rule can atomically reject a
-      // second redemption of the same code by the same user (closes the
-      // race the client-side "already used?" check above can't).
-      t.set(db.collection('voucher_uses').doc(code + '_' + currentUser.uid), { user_id: currentUser.uid, voucher_code: code, amount: v.amount, created_at: firebase.firestore.FieldValue.serverTimestamp() });
-      t.set(db.collection('balance_history').doc(), { user_id: currentUser.uid, type: 'voucher', amount: v.amount, description: 'Redeem Voucher: ' + code, created_at: firebase.firestore.FieldValue.serverTimestamp() });
+    // Redemption happens server-side now (backend/api/redeem-voucher.php) so
+    // the credited amount is always read from the real voucher doc, never
+    // trusted from the browser - see firestore.rules.
+    const idToken = await currentUser.getIdToken();
+    const res = await fetch('backend/api/redeem-voucher.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify({ code }),
     });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || 'Gagal redeem voucher');
 
-    showToast('Voucher berhasil! Saldo +Rp ' + v.amount.toLocaleString('id-ID'),'success');
+    showToast('Voucher berhasil! Saldo +Rp ' + data.amount.toLocaleString('id-ID'),'success');
     document.getElementById('voucher-input').value = '';
     const snap2 = await db.collection('users').doc(currentUser.uid).get();
     document.getElementById('user-balance').textContent = 'Rp ' + (snap2.data()?.balance||0).toLocaleString('id-ID');

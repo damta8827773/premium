@@ -197,12 +197,22 @@ async function payMidtrans() {
     });
 
     snap.pay(data.token, {
-      onSuccess: async result => {
-        await db.collection('deposits').doc(orderId).update({ status: 'success', completed_at: firebase.firestore.FieldValue.serverTimestamp() });
-        await db.collection('users').doc(currentUser.uid).update({ balance: firebase.firestore.FieldValue.increment(selectedAmount) });
-        await db.collection('balance_history').add({ user_id: currentUser.uid, type: 'deposit', amount: selectedAmount, description: 'Deposit via Midtrans', created_at: firebase.firestore.FieldValue.serverTimestamp() });
-        showToast('Deposit berhasil! Saldo sudah masuk.','success');
-        setTimeout(() => location.reload(), 2000);
+      onSuccess: () => {
+        // Balance is credited server-side once Midtrans's signed webhook lands
+        // (backend/api/midtrans-notify.php) - the browser no longer writes
+        // deposits/users/balance_history itself, see firestore.rules. Just
+        // wait for that Firestore write to show up.
+        showToast('Pembayaran diterima, menunggu konfirmasi...','info');
+        const unsub = db.collection('deposits').doc(orderId).onSnapshot(snap => {
+          if (snap.exists && snap.data().status === 'success') {
+            unsub();
+            showToast('Deposit berhasil! Saldo sudah masuk.','success');
+            setTimeout(() => location.reload(), 1500);
+          }
+        });
+        // Webhook delivery can occasionally lag - stop waiting and let the
+        // user refresh manually rather than leave a listener open forever.
+        setTimeout(unsub, 30000);
       },
       onPending: () => showToast('Pembayaran pending. Saldo akan masuk setelah dikonfirmasi.','info'),
       onError: () => showToast('Pembayaran gagal.','error'),
