@@ -311,8 +311,8 @@ document.getElementById('register-form').addEventListener('submit', async functi
   btn.innerHTML = '<span class="spinner"></span> Mendaftar...';
 
   try {
-    const uCheck = await db.collection('users').where('username','==',username).get();
-    if (!uCheck.empty) { showToast('Username sudah digunakan.'); btn.disabled=false; btn.textContent='Buat Akun Gratis'; return; }
+    const uCheck = await db.collection('usernames').doc(username).get();
+    if (uCheck.exists) { showToast('Username sudah digunakan.'); btn.disabled=false; btn.textContent='Buat Akun Gratis'; return; }
 
     let is_reseller = false;
     if (token) {
@@ -329,6 +329,10 @@ document.getElementById('register-form').addEventListener('submit', async functi
       reseller_token: token || null,
       created_at: firebase.firestore.FieldValue.serverTimestamp()
     });
+    // Reserve the username in a small public-readable lookup collection so
+    // future uniqueness checks never need to query the full users
+    // collection (see firestore.rules).
+    await db.collection('usernames').doc(username).set({ uid: cred.user.uid });
 
     showToast('Akun berhasil dibuat!', 'success');
     setTimeout(() => window.location.href = 'dashboard.php', 1200);

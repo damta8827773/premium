@@ -85,7 +85,10 @@ async function redeemVoucher() {
       const uRef = db.collection('users').doc(currentUser.uid);
       t.update(vRef, { used_count: firebase.firestore.FieldValue.increment(1) });
       t.update(uRef, { balance: firebase.firestore.FieldValue.increment(v.amount) });
-      t.set(db.collection('voucher_uses').doc(), { user_id: currentUser.uid, voucher_code: code, amount: v.amount, created_at: firebase.firestore.FieldValue.serverTimestamp() });
+      // Deterministic doc ID so the Firestore rule can atomically reject a
+      // second redemption of the same code by the same user (closes the
+      // race the client-side "already used?" check above can't).
+      t.set(db.collection('voucher_uses').doc(code + '_' + currentUser.uid), { user_id: currentUser.uid, voucher_code: code, amount: v.amount, created_at: firebase.firestore.FieldValue.serverTimestamp() });
       t.set(db.collection('balance_history').doc(), { user_id: currentUser.uid, type: 'voucher', amount: v.amount, description: 'Redeem Voucher: ' + code, created_at: firebase.firestore.FieldValue.serverTimestamp() });
     });
 
