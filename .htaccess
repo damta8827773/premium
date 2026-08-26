@@ -10,6 +10,11 @@ php_value max_execution_time 60
 RewriteEngine On
 RewriteBase /
 
+# Preserve the Authorization header for API auth - mod_php/CGI setups often
+# strip it before PHP ever sees it, unlike the built-in PHP server.
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%1]
+
 # Redirect /page to /page.php (only if the .php file exists and the path isn't a real file/dir)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -18,15 +23,17 @@ RewriteRule ^(.+)$ $1.php [L,QSA]
 
 # Security: block direct access to sensitive directories and files
 RewriteRule ^backend/config/ - [F,L]
+RewriteRule ^backend/includes/security-monitor\.php$ - [F,L]
+RewriteRule ^backend/security-logs/ - [F,L]
 RewriteRule ^temp/   - [F,L]
 RewriteRule ^\.      - [F,L]
 
 # Block access to PHP files inside api/ except legitimate endpoints
-<FilesMatch "^(?!midtrans-create|midtrans-notify|check-payment).*\.php$">
-  <IfModule mod_authz_core.c>
-    # Apache 2.4
-  </IfModule>
-</FilesMatch>
+# (scoped to backend/api/ only - a bare <FilesMatch> here would match every
+# .php file on the whole site, not just this directory)
+RewriteCond %{REQUEST_URI} ^/backend/api/
+RewriteCond %{REQUEST_URI} !^/backend/api/(midtrans-create|midtrans-notify|check-payment|ai-chat-reply)\.php$
+RewriteRule ^backend/api/.*\.php$ - [F,L]
 
 # Cache static assets
 <IfModule mod_expires.c>

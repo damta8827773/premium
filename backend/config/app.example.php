@@ -22,6 +22,12 @@ define('ADMIN_WA_2', '62XXXXXXXXXXX');       // admin WhatsApp number 2
 
 // Firebase (must match frontend/assets/js/firebase-init.js)
 define('FIREBASE_PROJECT_ID', 'your-firebase-project-id');
+define('FIREBASE_WEB_API_KEY', 'your-firebase-web-api-key'); // same apiKey as firebase-init.js - public by design, used server-side to verify ID tokens
+
+// Anthropic (Claude) API - AI live-chat auto-reply
+// Get a key from https://console.anthropic.com/settings/keys
+define('ANTHROPIC_API_KEY', 'YOUR_ANTHROPIC_API_KEY');
+define('ANTHROPIC_MODEL', 'claude-haiku-4-5-20251001');
 
 // Upload config
 define('UPLOAD_DIR', __DIR__ . '/../../uploads/');

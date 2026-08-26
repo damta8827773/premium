@@ -23,9 +23,15 @@ $signature_key      = $data['signature_key']      ?? '';
 $status_code        = $data['status_code']        ?? '';
 $fraud_status       = $data['fraud_status']       ?? '';
 
-// Verify signature
+// Verify signature (timing-safe comparison)
 $expected_sig = hash('sha512', $order_id . $status_code . $gross_amount . MIDTRANS_SERVER_KEY);
-if ($signature_key !== $expected_sig) {
+if (!hash_equals($expected_sig, $signature_key)) {
+    if (file_exists(__DIR__ . '/../includes/security-monitor.php')) {
+        require_once __DIR__ . '/../includes/security-monitor.php';
+        if (function_exists('security_log')) {
+            security_log('invalid_webhook_signature', 'high', ['order_id' => $order_id]);
+        }
+    }
     http_response_code(403);
     exit('Invalid signature');
 }
