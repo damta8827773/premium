@@ -19,17 +19,17 @@ require_once 'backend/includes/head.php';
           <p class="text-xs text-gray-400">Jelajahi aplikasi premium</p>
         </div>
       </div>
-      <a href="deposit.php" class="bg-primary text-white text-sm font-bold px-4 py-2 rounded-xl flex items-center gap-2">
+      <a href="deposit-8baa164a7f30.php" class="bg-primary text-white text-sm font-bold px-4 py-2 rounded-xl flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M2 10h20"/></svg>
         <span id="topbar-balance">Rp 0</span>
       </a>
     </header>
 
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <main class="flex-1 overflow-y-auto p-6 bg-app">
       <!-- Search -->
       <div class="relative mb-5">
         <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="search" placeholder="Cari produk ..." class="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-3 bg-white text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" oninput="filterProducts()">
+        <input type="text" id="search" placeholder="Cari produk ..." class="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-3 bg-white text-sm shadow-sm focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-shadow" oninput="filterProducts()">
       </div>
 
       <!-- Category Tabs -->
@@ -47,7 +47,7 @@ require_once 'backend/includes/head.php';
       <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         <!-- Loading skeleton -->
         <?php for($i=0;$i<10;$i++): ?>
-        <div class="bg-white rounded-2xl p-3 animate-pulse border border-gray-100">
+        <div class="card-premium p-3 animate-pulse">
           <div class="bg-gray-200 rounded-xl h-28 mb-3"></div>
           <div class="bg-gray-200 h-4 rounded mb-2"></div>
           <div class="bg-gray-200 h-3 rounded w-2/3"></div>
@@ -68,7 +68,7 @@ require_once 'backend/includes/head.php';
   <div class="modal-box max-w-lg">
     <div class="flex items-start justify-between mb-4">
       <div class="flex items-center gap-3">
-        <div id="modal-img-wrap" class="w-14 h-14 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0"></div>
+        <div id="modal-img-wrap" class="w-14 h-14 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0 ring-1 ring-gray-100 shadow-sm"></div>
         <div>
           <div id="modal-badge" class="text-xs font-bold text-black bg-gold px-2 py-0.5 rounded mb-1 inline-block"></div>
           <h2 id="modal-name" class="text-lg font-bold text-gray-800"></h2>
@@ -200,13 +200,14 @@ function renderProducts() {
     }
     if (p.image) imgHtml = `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-contain p-3" onerror="this.parentElement.innerHTML='<span class=text-primary font-bold text-xl>${p.name.charAt(0)}</span>'">`;
 
-    return `<div class="product-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm cursor-pointer" onclick="openProduct('${p.id}')">
-      ${p.badge ? `<div class="bg-gold px-2 py-1"><p class="text-black text-xs font-bold uppercase tracking-wide truncate">${p.badge}</p></div>` : ''}
+    const stockColor = totalStock <= 0 ? 'text-red-500' : totalStock <= 5 ? 'text-amber-600' : 'text-gray-400';
+    return `<div class="card-premium overflow-hidden cursor-pointer" onclick="openProduct('${p.id}')">
+      ${p.badge ? `<div class="bg-gradient-to-r from-gold to-gold-light px-2 py-1"><p class="text-black text-xs font-bold uppercase tracking-wide truncate">${p.badge}</p></div>` : ''}
       <div class="h-28 bg-gray-50 flex items-center justify-center overflow-hidden">${imgHtml}</div>
       <div class="p-3">
         <p class="text-sm font-bold text-gray-800 truncate">${p.name}</p>
         <p class="text-xs font-semibold text-primary mt-0.5">${priceText}</p>
-        <p class="text-xs text-gray-400 mt-0.5">Stok: ${totalStock}</p>
+        <p class="text-xs font-medium mt-0.5 ${stockColor}">Stok: ${totalStock}</p>
       </div>
     </div>`;
   }).join('');
@@ -291,52 +292,19 @@ async function processBuy() {
   btn.innerHTML = '<span class="spinner"></span> Memproses...';
 
   try {
-    // Get a stock item
-    const stockSnap = await db.collection('stock_items')
-      .where('variant_id','==',selectedVariant.id)
-      .where('is_used','==',false)
-      .limit(1).get();
-
-    if (stockSnap.empty) { showToast('Stok habis!','error'); btn.disabled=false; btn.innerHTML='Beli Sekarang'; return; }
-
-    const stockDoc = stockSnap.docs[0];
-    const invoice = generateInvoice();
-
-    // Transaction: deduct balance, create order, mark stock as used
-    await db.runTransaction(async t => {
-      const userRef = db.collection('users').doc(currentUser.uid);
-      const userSnap = await t.get(userRef);
-      const currentBalance = userSnap.data().balance || 0;
-      if (currentBalance < selectedVariant.price) throw new Error('Saldo tidak cukup');
-
-      const orderRef = db.collection('orders').doc();
-      const stockRef = db.collection('stock_items').doc(stockDoc.id);
-
-      const variantRef = db.collection('products').doc(selectedProduct.id).collection('variants').doc(selectedVariant.id);
-      const variantSnap = await t.get(variantRef);
-      const currStock = variantSnap.data().stock || 0;
-
-      t.update(userRef, { balance: currentBalance - selectedVariant.price });
-      t.set(orderRef, {
-        id: orderRef.id, invoice, user_id: currentUser.uid,
-        product_id: selectedProduct.id, product_name: selectedProduct.name,
-        variant_id: selectedVariant.id, variant_name: selectedVariant.name,
-        price: selectedVariant.price, status: 'selesai',
-        stock_item_id: stockDoc.id, stock_content: stockDoc.data().content,
-        created_at: firebase.firestore.FieldValue.serverTimestamp(),
-        completed_at: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      t.update(stockRef, { is_used: true, order_id: orderRef.id });
-      t.update(variantRef, { stock: Math.max(0, currStock - 1) });
-      t.set(db.collection('balance_history').doc(), {
-        user_id: currentUser.uid, type: 'pembelian',
-        amount: -selectedVariant.price,
-        description: `Pembelian ${selectedProduct.name} - ${selectedVariant.name}`,
-        created_at: firebase.firestore.FieldValue.serverTimestamp()
-      });
+    // Fulfillment happens server-side now (backend/api/checkout.php) - the
+    // browser never reads stock_items or writes balance directly anymore,
+    // see firestore.rules.
+    const idToken = await currentUser.getIdToken();
+    const res = await fetch('backend/api/checkout.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify({ product_id: selectedProduct.id, variant_id: selectedVariant.id }),
     });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || 'Gagal memproses pembelian.');
 
-    userBalance -= selectedVariant.price;
+    userBalance = data.new_balance;
     document.getElementById('topbar-balance').textContent = 'Rp ' + userBalance.toLocaleString('id-ID');
 
     closeModal();
@@ -350,11 +318,5 @@ async function processBuy() {
 function closeModal() {
   document.getElementById('modal-product').classList.add('hidden');
   selectedVariant = null; selectedProduct = null;
-}
-
-function generateInvoice() {
-  const d = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  return 'INV'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds())+Math.floor(Math.random()*1000);
 }
 </script>

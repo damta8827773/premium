@@ -510,12 +510,12 @@ footer{background:#020804;padding:48px 28px 28px;border-top:1px solid rgba(234,1
     </div>
     <?php
     $P=[
-      ['Canva Pro','Design & Kreatif','image/Canva_logo.png',5000,false,['Semua template premium','Remove background instan','Brand Kit lengkap','100GB cloud storage','Magic Resize unlimited']],
-      ['YouTube Premium','Streaming Video','image/YouTube_logo.png',3000,false,['Nonton tanpa iklan','Download video offline','YouTube Music gratis','Background play aktif','Akses Originals']],
-      ['Spotify Premium','Streaming Musik','image/Spotify_logo.png',3000,false,['Dengarkan tanpa iklan','Download lagu offline','Kualitas audio tinggi','Skip unlimited','Semua perangkat']],
-      ['AlightMotion Pro','Video & Motion Edit','image/AlightMotion_logo.png',5000,true,['Efek motion graphics','Ekspor tanpa watermark','Semua layer premium','Resolusi tinggi','Update otomatis']],
-      ['Netflix','Streaming & Film','image/Netflix_logo.png',10000,false,['Ribuan film & serial','Netflix Original eksklusif','Download offline','Full HD / 4K','Multi-perangkat']],
-      ['CapCut Pro','Video Editing','image/CapCut_logo.png',5000,false,['Template premium','Filter eksklusif','Ekspor tanpa watermark','Auto-caption AI','Resolusi 4K']],
+      ['Canva Pro','Design & Kreatif','frontend/image/Canva_logo.png',5000,false,['Semua template premium','Remove background instan','Brand Kit lengkap','100GB cloud storage','Magic Resize unlimited']],
+      ['YouTube Premium','Streaming Video','frontend/image/YouTube_logo.png',3000,false,['Nonton tanpa iklan','Download video offline','YouTube Music gratis','Background play aktif','Akses Originals']],
+      ['Spotify Premium','Streaming Musik','frontend/image/Spotify_logo.png',3000,false,['Dengarkan tanpa iklan','Download lagu offline','Kualitas audio tinggi','Skip unlimited','Semua perangkat']],
+      ['AlightMotion Pro','Video & Motion Edit','frontend/image/AlightMotion_logo.png',5000,true,['Efek motion graphics','Ekspor tanpa watermark','Semua layer premium','Resolusi tinggi','Update otomatis']],
+      ['Netflix','Streaming & Film','frontend/image/Netflix_logo.png',10000,false,['Ribuan film & serial','Netflix Original eksklusif','Download offline','Full HD / 4K','Multi-perangkat']],
+      ['CapCut Pro','Video Editing','frontend/image/CapCut_logo.png',5000,false,['Template premium','Filter eksklusif','Ekspor tanpa watermark','Auto-caption AI','Resolusi 4K']],
     ];?>
     <div class="pgrid">
     <?php foreach($P as $i=>[$n,$t,$l,$m,$pop,$ft]):
@@ -697,8 +697,8 @@ footer{background:#020804;padding:48px 28px 28px;border-top:1px solid rgba(234,1
 auth.onAuthStateChanged(async u=>{
   if(!u)return;
   try{const s=await firebase.firestore().collection('users').doc(u.uid).get();
-    window.location.href=(s.exists&&s.data().role==='admin')?'admin/index.php':'dashboard.php';
-  }catch(e){window.location.href='dashboard.php';}
+    window.location.href=(s.exists&&s.data().role==='admin')?'admin/index-488f58d95eb2.php':'dashboard-225514cdf1ed.php';
+  }catch(e){window.location.href='dashboard-225514cdf1ed.php';}
 });
 
 /* ══════════════════════════════════════

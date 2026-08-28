@@ -1,0 +1,206 @@
+rules_version = '2';
+
+/**
+ * Recommended Firestore Security Rules for Premium Store.
+ *
+ * This file is NOT auto-deployed - paste it into Firebase Console ->
+ * Firestore Database -> Rules -> Publish (or `firebase deploy --only
+ * firestore:rules` if you have firebase-tools set up; there's no
+ * firebase.json in this repo yet).
+ *
+ * Balance crediting and stock_items access now go entirely through
+ * server-side endpoints authenticated as a service account (see
+ * backend/includes/firestore-rest.php, backend/api/checkout.php,
+ * backend/api/redeem-voucher.php, and the deposit-crediting step added to
+ * backend/api/midtrans-notify.php) - that identity bypasses these rules
+ * entirely, same as the Admin SDK/Cloud Functions would. Deploy the
+ * server-side endpoints FIRST and confirm they work before publishing
+ * this version of the rules: the old client-side writes to balance,
+ * stock_items, orders, deposits.status, voucher_uses, and balance_history
+ * are denied below, so publishing this first would break checkout/
+ * deposit/redeem immediately.
+ */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // ---- users ----
+    match /users/{uid} {
+      allow get: if isOwner(uid) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isOwner(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.role == 'buyer'
+        && request.resource.data.balance == 0
+        && (
+          request.resource.data.is_reseller == false ||
+          (
+            request.resource.data.reseller_token != null &&
+            get(/databases/$(database)/documents/reseller_tokens/$(request.resource.data.reseller_token)).data.is_active == true
+          )
+        );
+      // Owner can update their own profile fields (name/phone/username) but
+      // never role, is_reseller, uid, or balance themselves - balance is
+      // now only ever changed by the service account (checkout.php,
+      // redeem-voucher.php, midtrans-notify.php) or an admin.
+      allow update: if isAdmin() || (
+        isOwner(uid) &&
+        request.resource.data.role == resource.data.role &&
+        request.resource.data.is_reseller == resource.data.is_reseller &&
+        request.resource.data.uid == resource.data.uid &&
+        request.resource.data.balance == resource.data.balance
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Minimal public lookup so register.php's unauthenticated
+    // username-uniqueness check never has to query the full users
+    // collection (which would otherwise leak every user's data to an
+    // unauthenticated visitor).
+    match /usernames/{username} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if isSignedIn()
+        && request.resource.data.uid == request.auth.uid
+        && !exists(/databases/$(database)/documents/usernames/$(username));
+      allow update, delete: if false;
+    }
+
+    match /reseller_tokens/{token} {
+      allow get: if true;   // needed pre-signup, before the user is authenticated
+      allow list: if false;
+      allow write: if isAdmin();
+    }
+
+    // ---- catalog (public browsing) ----
+    match /products/{id}/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Holds the actual delivered account credentials (`content`) - never
+    // client-readable. checkout.php (service account) is the only path
+    // that ever reads or claims one now.
+    match /stock_items/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /announcements/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /vouchers/{code} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // ---- user-owned records (all keyed by a user_id field) ----
+    // checkout.php (service account) creates orders now - the client only reads its own.
+    match /orders/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /warranties/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
+      allow write: if isAdmin();
+    }
+
+    match /claims/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.user_id == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // Owner may only ever create a deposit as 'pending' (deposit-8baa164a7f30.php does
+    // this before redirecting to Midtrans/uploading manual proof). The
+    // transition to 'success' is server-only: midtrans-notify.php for
+    // Midtrans deposits, an admin approving a manual one.
+    match /deposits/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
+      allow create: if isSignedIn()
+        && request.resource.data.user_id == request.auth.uid
+        && request.resource.data.status == 'pending';
+      allow update, delete: if isAdmin();
+    }
+
+    // Server-only now (checkout.php / redeem-voucher.php / midtrans-notify.php) - append-only ledger.
+    match /balance_history/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Server-only now (redeem-voucher.php) - the deterministic {code}_{uid}
+    // doc ID is still what makes double-redeem impossible (create fails if
+    // the doc already exists), enforced there via a precondition instead
+    // of a client-facing rule.
+    match /voucher_uses/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ---- live chat ----
+    match /chats/{chatId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
+      allow create: if isSignedIn()
+        && request.resource.data.user_id == request.auth.uid
+        && request.resource.data.status == 'ai'
+        && request.resource.data.assigned_admin_id == null;
+      // Owner may only escalate ai -> waiting_admin themselves; claiming
+      // (-> active_admin), reassigning, or closing is admin-only.
+      allow update: if isAdmin() || (
+        isSignedIn() && resource.data.user_id == request.auth.uid &&
+        request.resource.data.user_id == resource.data.user_id &&
+        request.resource.data.assigned_admin_id == resource.data.assigned_admin_id &&
+        (request.resource.data.status == resource.data.status ||
+          (resource.data.status == 'ai' && request.resource.data.status == 'waiting_admin'))
+      );
+      allow delete: if false;
+
+      match /messages/{msgId} {
+        allow read: if isAdmin() || (isSignedIn() && get(/databases/$(database)/documents/chats/$(chatId)).data.user_id == request.auth.uid);
+        allow create: if isAdmin() || (
+          isSignedIn() &&
+          get(/databases/$(database)/documents/chats/$(chatId)).data.user_id == request.auth.uid &&
+          request.resource.data.sender_type in ['user', 'ai'] &&
+          (request.resource.data.sender_type != 'user' || request.resource.data.sender_id == request.auth.uid)
+        );
+        // Either side may only toggle their own read-receipt fields.
+        allow update: if isAdmin() || (
+          isSignedIn() && get(/databases/$(database)/documents/chats/$(chatId)).data.user_id == request.auth.uid &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read_by_user', 'read_by_user_at'])
+        );
+        allow delete: if false;
+      }
+    }
+
+    match /presence/{uid} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(uid);
+    }
+
+    // Written by the service account (checkout.php, midtrans-notify.php,
+    // redeem-voucher.php) for purchase/deposit/voucher events, or directly
+    // by an admin's own client session (deposit approval, chat replies) -
+    // isAdmin() covers both since the service account bypasses rules
+    // entirely anyway. Owner may only toggle their own `read` flag.
+    match /notifications/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
+      allow create: if isAdmin();
+      allow update: if isAdmin() || (
+        isSignedIn() && resource.data.user_id == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read'])
+      );
+      allow delete: if false;
+    }
+  }
+}

@@ -16,16 +16,16 @@ require_once 'backend/includes/head.php';
         <p class="text-xs text-gray-400">Lihat ketersediaan stock semua produk</p>
       </div>
     </header>
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <main class="flex-1 overflow-y-auto p-6 bg-app">
       <!-- Filter -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-5">
+      <div class="card-premium p-4 mb-5">
         <select id="filter-product" onchange="filterStock()" class="input-field max-w-xs text-sm">
           <option value="">Semua Aplikasi</option>
         </select>
       </div>
       <div id="stock-list" class="space-y-4">
         <?php for($i=0;$i<4;$i++): ?>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 animate-pulse">
+        <div class="card-premium p-5 animate-pulse">
           <div class="flex items-center gap-3 mb-4">
             <div class="w-9 h-9 bg-gray-200 rounded-lg"></div>
             <div class="flex-1"><div class="h-4 bg-gray-200 rounded w-1/3 mb-1"></div><div class="h-3 bg-gray-200 rounded w-1/4"></div></div>
@@ -61,8 +61,11 @@ async function loadStock() {
       p.variants = [];
       for (const v of vSnap.docs) {
         const vd = { id: v.id, ...v.data() };
-        const stockSnap = await db.collection('stock_items').where('variant_id','==',v.id).where('is_used','==',false).get();
-        vd.available_stock = stockSnap.size;
+        // Uses the variant's own stock counter (same one toko-e3514627bb16.php's catalog
+        // shows) instead of querying stock_items directly - that collection
+        // holds the actual delivered account credentials and is admin-only
+        // to read now, see firestore.rules.
+        vd.available_stock = vd.stock || 0;
         p.variants.push(vd);
       }
       allStockData.push(p);
@@ -116,7 +119,7 @@ function renderStock() {
       </div>`;
     }).join('');
 
-    return `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    return `<div class="card-premium overflow-hidden">
       <div class="flex items-center justify-between px-5 py-4 bg-primary text-white">
         <div class="flex items-center gap-3">${imgHtml.replace('bg-primary/10','bg-white/20')}<div><p class="font-bold">${p.name.toUpperCase()}</p><p class="text-white/60 text-xs">${p.variants.length} variasi</p></div></div>
         <span class="text-sm font-bold bg-green-500/20 text-green-300 px-3 py-1 rounded-lg">${totalReady} ready</span>

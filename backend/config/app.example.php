@@ -22,6 +22,18 @@ define('ADMIN_WA_2', '62XXXXXXXXXXX');       // admin WhatsApp number 2
 
 // Firebase (must match frontend/assets/js/firebase-init.js)
 define('FIREBASE_PROJECT_ID', 'your-firebase-project-id');
+define('FIREBASE_WEB_API_KEY', 'your-firebase-web-api-key'); // same apiKey as firebase-init.js - public by design, used server-side to verify ID tokens
+
+// Service account for server-side Firestore writes (checkout, deposit crediting,
+// voucher redemption). Generate via Firebase Console -> Project Settings ->
+// Service Accounts -> Generate new private key, save the JSON here. This is far
+// more sensitive than the keys above (full read/write on Firestore) - never commit it.
+define('FIREBASE_SERVICE_ACCOUNT_PATH', __DIR__ . '/firebase-service-account.json');
+
+// Anthropic (Claude) API - AI live-chat auto-reply
+// Get a key from https://console.anthropic.com/settings/keys
+define('ANTHROPIC_API_KEY', 'YOUR_ANTHROPIC_API_KEY');
+define('ANTHROPIC_MODEL', 'claude-haiku-4-5-20251001');
 
 // Upload config
 define('UPLOAD_DIR', __DIR__ . '/../../uploads/');

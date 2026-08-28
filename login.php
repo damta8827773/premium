@@ -1,4 +1,7 @@
-<?php $page_title = "Masuk - Premium App"; ?>
+<?php
+$page_title = "Masuk - Premium App";
+require_once 'backend/config/app.php';
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -265,6 +268,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; display:
       <div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <label style="font-size:13px;font-weight:600;color:#374151">Password</label>
+          <button type="button" onclick="openForgotModal()" style="background:none;border:none;padding:0;font-size:12px;font-weight:700;color:#1B3528;cursor:pointer;text-decoration:none">Lupa password?</button>
         </div>
         <div class="input-wrap">
           <input type="password" id="login-password" class="input-field" placeholder="Masukkan password" required autocomplete="current-password" style="padding-right:44px">
@@ -293,6 +297,24 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; display:
   </div>
 </div>
 
+<!-- Forgot password modal -->
+<div id="modal-forgot" class="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this) closeForgotModal()">
+  <div style="background:#fff;border-radius:16px;padding:24px;max-width:400px;width:100%;box-shadow:0 24px 48px -12px rgba(0,0,0,0.35)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <h3 style="font-weight:800;font-size:16px;color:#111827">Lupa Password</h3>
+      <button type="button" onclick="closeForgotModal()" style="background:none;border:none;cursor:pointer;color:#9ca3af">
+        <svg style="width:20px;height:20px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <p style="font-size:13px;color:#9ca3af;margin-bottom:18px">Masukkan email akun kamu. Kami kirim link untuk atur ulang password.</p>
+    <form id="forgot-form">
+      <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">Email</label>
+      <input type="email" id="forgot-email" class="input-field" placeholder="nama@email.com" required autocomplete="email" style="margin-bottom:16px">
+      <button type="submit" id="btn-forgot" class="btn-primary-form">Kirim Link Reset</button>
+    </form>
+  </div>
+</div>
+
 <script>
 // Show mobile logo on small screens
 if (window.innerWidth <= 768) document.getElementById('mobile-logo').style.display = 'block';
@@ -313,12 +335,47 @@ function togglePass() {
   inp.type = passVisible ? 'text' : 'password';
 }
 
+const APP_URL = "<?= htmlspecialchars(APP_URL) ?>";
+
+function openForgotModal() {
+  document.getElementById('forgot-email').value = document.getElementById('login-email').value || '';
+  document.getElementById('modal-forgot').style.display = 'flex';
+}
+function closeForgotModal() {
+  document.getElementById('modal-forgot').style.display = 'none';
+}
+
+document.getElementById('forgot-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btn-forgot');
+  const email = document.getElementById('forgot-email').value.trim();
+  if (!email) return;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+  try {
+    await auth.sendPasswordResetEmail(email, {
+      url: APP_URL + '/reset-password-b0349b43a31f.php',
+      handleCodeInApp: true
+    });
+    showToast('Link reset password sudah dikirim ke email kamu.', 'success');
+    closeForgotModal();
+  } catch (err) {
+    let msg = 'Gagal mengirim email reset. Coba lagi.';
+    if (err.code === 'auth/user-not-found') msg = 'Email tidak terdaftar.';
+    else if (err.code === 'auth/invalid-email') msg = 'Format email tidak valid.';
+    else if (err.code === 'auth/too-many-requests') msg = 'Terlalu banyak percobaan. Coba lagi nanti.';
+    showToast(msg);
+  }
+  btn.disabled = false;
+  btn.textContent = 'Kirim Link Reset';
+});
+
 auth.onAuthStateChanged(async user => {
   if (!user) return;
   try {
     const s = await db.collection('users').doc(user.uid).get();
-    window.location.href = (s.exists && s.data().role === 'admin') ? 'admin/index.php' : 'dashboard.php';
-  } catch(e) { window.location.href = 'dashboard.php'; }
+    window.location.href = (s.exists && s.data().role === 'admin') ? 'admin/index-488f58d95eb2.php' : 'dashboard-225514cdf1ed.php';
+  } catch(e) { window.location.href = 'dashboard-225514cdf1ed.php'; }
 });
 
 document.getElementById('login-form').addEventListener('submit', async function(e) {
@@ -333,7 +390,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
   try {
     const cred = await auth.signInWithEmailAndPassword(email, password);
     const s = await db.collection('users').doc(cred.user.uid).get();
-    window.location.href = (s.exists && s.data().role === 'admin') ? 'admin/index.php' : 'dashboard.php';
+    window.location.href = (s.exists && s.data().role === 'admin') ? 'admin/index-488f58d95eb2.php' : 'dashboard-225514cdf1ed.php';
   } catch(err) {
     let msg = 'Login gagal. Coba lagi.';
     if (['auth/user-not-found','auth/wrong-password','auth/invalid-credential'].includes(err.code)) msg = 'Email atau password salah.';
@@ -362,7 +419,7 @@ async function loginWithGoogle() {
       });
     }
     const s = await db.collection('users').doc(user.uid).get();
-    window.location.href = (s.exists && s.data().role === 'admin') ? 'admin/index.php' : 'dashboard.php';
+    window.location.href = (s.exists && s.data().role === 'admin') ? 'admin/index-488f58d95eb2.php' : 'dashboard-225514cdf1ed.php';
   } catch(err) {
     if (err.code !== 'auth/popup-closed-by-user') showToast('Login Google gagal. Coba lagi.');
     btn.disabled = false;

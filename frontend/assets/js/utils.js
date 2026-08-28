@@ -4,8 +4,15 @@ function showToast(message, type = 'success') {
   const inner = document.getElementById('toast-inner');
   if (!toast || !inner) return;
   const colors = { success: '#1B3528', error: '#DC2626', warning: '#D97706', info: '#2563EB' };
+  const icons = {
+    success: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>',
+    error:   '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>',
+    warning: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v4m0 4h.01M10.29 3.86l-8.4 14.55A1 1 0 002.75 20h18.5a1 1 0 00.87-1.59l-8.4-14.55a1 1 0 00-1.73 0z"/>',
+    info:    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+  };
   inner.style.background = colors[type] || colors.success;
-  inner.textContent = message;
+  inner.innerHTML = `<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">${icons[type] || icons.success}</svg><span></span>`;
+  inner.querySelector('span').textContent = message;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3500);
 }
@@ -38,6 +45,12 @@ function timeAgo(timestamp) {
   return Math.floor(diff/2592000) + ' bulan lalu';
 }
 
+// ===== HTML ESCAPE (use before inserting any user-supplied text via innerHTML) =====
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+
 // ===== GENERATE INVOICE =====
 function generateInvoice() {
   const d = new Date();
@@ -67,20 +80,28 @@ function setLoading(btn, loading, text = null) {
 
 // ===== STATUS BADGE =====
 function statusBadge(status) {
-  const map = {
-    'selesai':   ['bg-green-100 text-green-700', 'Selesai'],
-    'pending':   ['bg-yellow-100 text-yellow-700', 'Pending'],
-    'expired':   ['bg-gray-100 text-gray-600', 'Expired'],
-    'batal':     ['bg-red-100 text-red-600', 'Batal'],
-    'success':   ['bg-green-100 text-green-700', 'Sukses'],
-    'failed':    ['bg-red-100 text-red-600', 'Gagal'],
-    'aktif':     ['bg-green-100 text-green-700', 'Aktif'],
-    'menunggu':  ['bg-yellow-100 text-yellow-700', 'Menunggu'],
-    'diproses':  ['bg-blue-100 text-blue-700', 'Diproses'],
-    'ditolak':   ['bg-red-100 text-red-600', 'Ditolak'],
+  const labels = {
+    'selesai': 'Selesai', 'pending': 'Pending', 'expired': 'Expired', 'batal': 'Batal',
+    'success': 'Sukses', 'failed': 'Gagal', 'aktif': 'Aktif', 'menunggu': 'Menunggu',
+    'diproses': 'Diproses', 'ditolak': 'Ditolak',
   };
-  const [cls, label] = map[status] || ['bg-gray-100 text-gray-600', status];
-  return `<span class="inline-block text-xs font-semibold px-2.5 py-1 rounded-lg ${cls}">${label}</span>`;
+  const label = labels[status] || status;
+  return `<span class="status-pill" data-status="${status}">${label}</span>`;
+}
+
+// ===== AVATAR (Google profile photo, else Gravatar keyed off the registered email) =====
+async function gravatarUrl(email) {
+  const clean = (email || '').trim().toLowerCase();
+  const enc = new TextEncoder().encode(clean);
+  const hashBuf = await crypto.subtle.digest('SHA-256', enc);
+  const hex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return `https://www.gravatar.com/avatar/${hex}?d=404&s=80`;
+}
+function setAvatarImage(el, url) {
+  const img = new Image();
+  img.onload = () => { el.innerHTML = ''; img.className = 'w-full h-full object-cover'; el.appendChild(img); };
+  img.onerror = () => {}; // keep the initial-letter fallback already in place
+  img.src = url;
 }
 
 // ===== UPDATE SIDEBAR USER INFO =====
@@ -99,7 +120,14 @@ auth.onAuthStateChanged(async user => {
 
     if (nameEl) nameEl.textContent = displayName;
     if (adminNameEl) adminNameEl.textContent = displayName;
-    if (avatarEl) { avatarEl.textContent = initial; }
+    if (avatarEl) {
+      avatarEl.textContent = initial;
+      if (user.photoURL) {
+        setAvatarImage(avatarEl, user.photoURL);
+      } else {
+        gravatarUrl(data.email || user.email).then(url => setAvatarImage(avatarEl, url)).catch(() => {});
+      }
+    }
     if (roleEl) roleEl.textContent = data.is_reseller ? 'Reseller' : 'Buyer';
   } catch(e) {
     if (nameEl && user.displayName) nameEl.textContent = user.displayName;

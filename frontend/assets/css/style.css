@@ -13,8 +13,64 @@ body { font-family: 'Inter', sans-serif; }
 .page-header-border { border-bottom: 1px solid #e5e7eb; padding-bottom: 16px; margin-bottom: 24px; }
 
 /* Product card hover */
-.product-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-.product-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+.product-card { transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; border: 1px solid transparent; }
+.product-card:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(27,53,40,0.14); border-color: rgba(234,179,8,0.35); }
+
+/* Premium card — replaces the plain bg-white/border/shadow-sm combo used across buyer pages */
+.card-premium {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  position: relative;
+}
+.card-premium::before {
+  content: '';
+  position: absolute; top: 0; left: 18px; right: 18px; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(234,179,8,0.55), transparent);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.card-premium:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(27,53,40,0.1), 0 4px 10px rgba(0,0,0,0.04);
+  border-color: rgba(234,179,8,0.22);
+}
+.card-premium:hover::before { opacity: 1; }
+
+/* Soft app background wash for main content areas */
+.bg-app {
+  background:
+    radial-gradient(ellipse 1100px 500px at 15% -10%, rgba(234,179,8,0.05), transparent 55%),
+    radial-gradient(ellipse 900px 500px at 100% 0%, rgba(27,53,40,0.05), transparent 55%),
+    #f9fafb;
+}
+
+/* Stat card icon badge with glow */
+.stat-card-icon {
+  width: 46px; height: 46px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--sc-a, #dcfce7), var(--sc-b, #bbf7d0));
+  box-shadow: 0 0 0 5px var(--sc-glow, rgba(34,197,94,0.07));
+  transition: transform 0.25s ease;
+}
+.card-premium:hover .stat-card-icon { transform: scale(1.08) rotate(-4deg); }
+
+/* Status pill — consistent status badge used across pesanan/garansi/klaim/deposit */
+.status-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
+  padding: 4px 10px 4px 8px; border-radius: 999px;
+  white-space: nowrap;
+}
+.status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.status-pill[data-status="selesai"], .status-pill[data-status="success"], .status-pill[data-status="aktif"] { background: #ecfdf3; color: #15803d; }
+.status-pill[data-status="pending"], .status-pill[data-status="menunggu"] { background: #fffbeb; color: #b45309; }
+.status-pill[data-status="expired"] { background: #f4f4f5; color: #52525b; }
+.status-pill[data-status="batal"], .status-pill[data-status="failed"], .status-pill[data-status="ditolak"] { background: #fef2f2; color: #b91c1c; }
+.status-pill[data-status="diproses"] { background: #eff6ff; color: #1d4ed8; }
 
 /* Gold gradient button */
 .btn-gold {
@@ -34,6 +90,15 @@ body { font-family: 'Inter', sans-serif; }
 .btn-gold:hover { background: linear-gradient(135deg, #EAB308, #CA8A04); transform: translateY(-1px); }
 .btn-gold:active { transform: scale(0.97); }
 .btn-gold:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.btn-gold, .btn-primary { position: relative; overflow: hidden; }
+.btn-gold::after, .btn-primary::after {
+  content: ''; position: absolute; top: 0; left: -75%; width: 45%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+}
+.btn-gold:hover::after, .btn-primary:hover::after { left: 130%; }
 
 /* Primary green button */
 .btn-primary {
@@ -180,20 +245,33 @@ body { font-family: 'Inter', sans-serif; }
 
 /* Balance card gradient */
 .balance-card {
-  background: linear-gradient(135deg, #1B3528 0%, #234535 50%, #1B3528 100%);
-  border-radius: 16px;
+  background: linear-gradient(135deg, #1B3528 0%, #234535 50%, #16291d 100%);
+  border-radius: 18px;
   padding: 24px;
   color: white;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 20px 40px -16px rgba(15,34,25,0.55);
 }
 .balance-card::after {
   content: '';
   position: absolute;
   top: -30px; right: -30px;
-  width: 120px; height: 120px;
+  width: 140px; height: 140px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.05);
+  background: radial-gradient(circle, rgba(234,179,8,0.14), transparent 70%);
+}
+.balance-card .shimmer {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.07) 50%, transparent 60%);
+  background-size: 220% 220%;
+  animation: shimmerSweep 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes shimmerSweep {
+  0% { background-position: 200% 0; }
+  100% { background-position: -60% 0; }
 }
 
 /* Announcement card */

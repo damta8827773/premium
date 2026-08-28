@@ -11,13 +11,14 @@ require_once 'backend/includes/head.php';
       <button class="lg:hidden text-gray-500" onclick="toggleSidebar()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       <h1 class="text-xl font-bold text-gray-800">Redeem Voucher</h1>
     </header>
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <main class="flex-1 overflow-y-auto p-6 bg-app">
       <div class="max-w-xl mx-auto space-y-5">
         <div class="balance-card">
-          <p class="text-white/60 text-xs mb-1">SALDO KAMU</p>
-          <p id="user-balance" class="text-3xl font-bold text-white">Rp 0</p>
+          <div class="shimmer"></div>
+          <p class="text-white/60 text-xs mb-1 relative">SALDO KAMU</p>
+          <p id="user-balance" class="text-3xl font-bold text-white relative">Rp 0</p>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div class="card-premium p-6">
           <h2 class="font-bold text-gray-800 mb-1">Masukkan Kode Voucher</h2>
           <p class="text-sm text-gray-400 mb-4">Masukkan kode voucher yang kamu punya untuk mendapatkan saldo gratis.</p>
           <div class="flex gap-3">
@@ -25,7 +26,7 @@ require_once 'backend/includes/head.php';
             <button onclick="redeemVoucher()" id="btn-redeem" class="btn-primary px-5 flex-shrink-0">Redeem</button>
           </div>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="card-premium p-5">
           <h3 class="font-bold text-gray-800 mb-4">Riwayat Redeem</h3>
           <div id="redeem-history">
             <div class="text-center py-8">
@@ -69,26 +70,19 @@ async function redeemVoucher() {
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
 
   try {
-    const vSnap = await db.collection('vouchers').doc(code).get();
-    if (!vSnap.exists) throw new Error('Kode voucher tidak valid');
-    const v = vSnap.data();
-    if (!v.is_active) throw new Error('Voucher sudah tidak aktif');
-    if (v.used_count >= v.max_uses) throw new Error('Voucher sudah habis digunakan');
-
-    // Check if user already used this voucher
-    const usedSnap = await db.collection('voucher_uses').where('user_id','==',currentUser.uid).where('voucher_code','==',code).get();
-    if (!usedSnap.empty) throw new Error('Kamu sudah pernah menggunakan voucher ini');
-
-    await db.runTransaction(async t => {
-      const vRef = db.collection('vouchers').doc(code);
-      const uRef = db.collection('users').doc(currentUser.uid);
-      t.update(vRef, { used_count: firebase.firestore.FieldValue.increment(1) });
-      t.update(uRef, { balance: firebase.firestore.FieldValue.increment(v.amount) });
-      t.set(db.collection('voucher_uses').doc(), { user_id: currentUser.uid, voucher_code: code, amount: v.amount, created_at: firebase.firestore.FieldValue.serverTimestamp() });
-      t.set(db.collection('balance_history').doc(), { user_id: currentUser.uid, type: 'voucher', amount: v.amount, description: 'Redeem Voucher: ' + code, created_at: firebase.firestore.FieldValue.serverTimestamp() });
+    // Redemption happens server-side now (backend/api/redeem-voucher.php) so
+    // the credited amount is always read from the real voucher doc, never
+    // trusted from the browser - see firestore.rules.
+    const idToken = await currentUser.getIdToken();
+    const res = await fetch('backend/api/redeem-voucher.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify({ code }),
     });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || 'Gagal redeem voucher');
 
-    showToast('Voucher berhasil! Saldo +Rp ' + v.amount.toLocaleString('id-ID'),'success');
+    showToast('Voucher berhasil! Saldo +Rp ' + data.amount.toLocaleString('id-ID'),'success');
     document.getElementById('voucher-input').value = '';
     const snap2 = await db.collection('users').doc(currentUser.uid).get();
     document.getElementById('user-balance').textContent = 'Rp ' + (snap2.data()?.balance||0).toLocaleString('id-ID');

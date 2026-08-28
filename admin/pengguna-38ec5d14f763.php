@@ -36,7 +36,7 @@ let allUsers=[];
 auth.onAuthStateChanged(async user=>{
   if(!user){window.location.href='../login.php';return;}
   const s=await db.collection('users').doc(user.uid).get();
-  if(!s.exists||s.data().role!=='admin'){window.location.href='../dashboard.php';return;}
+  if(!s.exists||s.data().role!=='admin'){window.location.href='../dashboard-225514cdf1ed.php';return;}
   const snap=await db.collection('users').orderBy('created_at','desc').get();
   allUsers=snap.docs.map(d=>({id:d.id,...d.data()}));
   renderUsers();
@@ -49,8 +49,8 @@ function renderUsers(){
     <div class="overflow-x-auto"><table class="w-full text-sm">
       <thead><tr class="bg-gray-50 border-b text-left"><th class="px-4 py-3 text-xs font-semibold text-gray-600">Nama</th><th class="px-4 py-3 text-xs font-semibold text-gray-600">Email</th><th class="px-4 py-3 text-xs font-semibold text-gray-600">Saldo</th><th class="px-4 py-3 text-xs font-semibold text-gray-600">Role</th><th class="px-4 py-3 text-xs font-semibold text-gray-600">Aksi</th></tr></thead>
       <tbody class="divide-y divide-gray-50">${filtered.map(u=>`<tr class="hover:bg-gray-50">
-        <td class="px-4 py-3"><p class="font-semibold text-gray-800">${u.name||'-'}</p><p class="text-xs text-gray-400">@${u.username||'-'}</p></td>
-        <td class="px-4 py-3 text-xs text-gray-500">${u.email||'-'}</td>
+        <td class="px-4 py-3"><p class="font-semibold text-gray-800">${escapeHtml(u.name)||'-'}</p><p class="text-xs text-gray-400">@${escapeHtml(u.username)||'-'}</p></td>
+        <td class="px-4 py-3 text-xs text-gray-500">${escapeHtml(u.email)||'-'}</td>
         <td class="px-4 py-3 font-bold text-gray-800">Rp ${(u.balance||0).toLocaleString('id-ID')}</td>
         <td class="px-4 py-3"><span class="text-xs font-semibold px-2 py-0.5 rounded-lg ${u.role==='admin'?'bg-yellow-100 text-yellow-700':u.is_reseller?'bg-blue-100 text-blue-600':'bg-gray-100 text-gray-600'}">${u.role==='admin'?'Admin':u.is_reseller?'Reseller':'Buyer'}</span></td>
         <td class="px-4 py-3"><button onclick="showUser('${u.id}')" class="text-xs bg-primary text-white font-semibold px-3 py-1.5 rounded-lg hover:bg-primary-light">Detail</button></td>
@@ -63,10 +63,10 @@ function showUser(id){
   document.getElementById('user-detail').innerHTML=`<div class="space-y-4">
     <div class="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
       <div class="flex justify-between"><span class="text-gray-500">UID</span><span class="font-mono text-xs text-gray-700">${u.id}</span></div>
-      <div class="flex justify-between"><span class="text-gray-500">Nama</span><span class="font-semibold">${u.name||'-'}</span></div>
-      <div class="flex justify-between"><span class="text-gray-500">Email</span><span class="font-semibold">${u.email||'-'}</span></div>
-      <div class="flex justify-between"><span class="text-gray-500">Username</span><span class="font-semibold">@${u.username||'-'}</span></div>
-      <div class="flex justify-between"><span class="text-gray-500">Telepon</span><span class="font-semibold">${u.phone||'-'}</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Nama</span><span class="font-semibold">${escapeHtml(u.name)||'-'}</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Email</span><span class="font-semibold">${escapeHtml(u.email)||'-'}</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Username</span><span class="font-semibold">@${escapeHtml(u.username)||'-'}</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Telepon</span><span class="font-semibold">${escapeHtml(u.phone)||'-'}</span></div>
       <div class="flex justify-between"><span class="text-gray-500">Saldo</span><span class="font-bold text-green-600">Rp ${(u.balance||0).toLocaleString('id-ID')}</span></div>
       <div class="flex justify-between"><span class="text-gray-500">Role</span><span class="font-semibold">${u.role||'buyer'}</span></div>
       <div class="flex justify-between"><span class="text-gray-500">Daftar</span><span class="font-semibold">${d}</span></div>

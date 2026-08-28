@@ -71,7 +71,7 @@ let statusFilter = 'semua', methodFilter = 'semua';
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location.href = '../login.php'; return; }
   const snap = await db.collection('users').doc(user.uid).get();
-  if (!snap.exists || snap.data().role !== 'admin') { window.location.href = '../dashboard.php'; return; }
+  if (!snap.exists || snap.data().role !== 'admin') { window.location.href = '../dashboard-225514cdf1ed.php'; return; }
   loadDeposits();
 });
 
@@ -107,6 +107,7 @@ function renderDeposits() {
         </div>
         <p class="font-bold text-gray-800">Rp ${(dep.amount||0).toLocaleString('id-ID')}</p>
         <p class="text-xs text-gray-400">${dep.user_id?.slice(0,12)||'-'} · ${d}</p>
+        ${dep.ai_analysis?`<p class="text-xs mt-1 ${dep.ai_analysis.looks_like_payment_proof&&dep.ai_analysis.matches_expected_amount!==false?'text-green-600':'text-yellow-600'}">🤖 ${dep.ai_analysis.notes||''}</p>`:''}
       </div>
       <div class="flex gap-2 flex-shrink-0">
         ${dep.proof_image?`<button onclick="showDepDetail('${dep.id}')" class="text-xs bg-gray-100 text-gray-700 font-semibold px-3 py-1.5 rounded-lg hover:bg-gray-200">Bukti</button>`:''}
@@ -127,8 +128,14 @@ function showDepDetail(id) {
         <div class="flex justify-between"><span class="text-gray-500">Jumlah</span><span class="font-bold text-green-600">Rp ${(dep.amount||0).toLocaleString('id-ID')}</span></div>
         <div class="flex justify-between"><span class="text-gray-500">Metode</span><span class="font-semibold">${dep.method||'-'}</span></div>
         <div class="flex justify-between"><span class="text-gray-500">Status</span><span class="font-semibold">${dep.status||'-'}</span></div>
+        ${dep.qris_used?`<div class="flex justify-between"><span class="text-gray-500">QRIS Dipakai</span><span class="font-semibold">${dep.qris_used}</span></div>`:''}
         ${dep.note?`<div class="flex justify-between"><span class="text-gray-500">Catatan</span><span class="font-semibold">${dep.note}</span></div>`:''}
       </div>
+      ${dep.ai_analysis?`<div class="rounded-xl p-3 text-xs ${dep.ai_analysis.looks_like_payment_proof&&dep.ai_analysis.matches_expected_amount!==false?'bg-green-50 text-green-700':'bg-yellow-50 text-yellow-700'}">
+        <p class="font-bold mb-1">🤖 Analisa AI (rekomendasi, bukan keputusan akhir)</p>
+        <p>${dep.ai_analysis.notes||'-'}</p>
+        <p class="mt-1 text-gray-500">Nominal terdeteksi: ${dep.ai_analysis.extracted_amount!=null?'Rp '+Number(dep.ai_analysis.extracted_amount).toLocaleString('id-ID'):'tidak terdeteksi'} · Waktu: ${dep.ai_analysis.extracted_datetime||'tidak terdeteksi'}</p>
+      </div>`:''}
       ${dep.proof_image?`<img src="${dep.proof_image}" class="w-full rounded-xl border" alt="Bukti">`:''}
       ${dep.status==='pending'&&dep.method==='manual'?`<div class="flex gap-3">
         <button onclick="approveDeposit('${dep.id}','${dep.user_id}',${dep.amount});document.getElementById('modal-dep').classList.add('hidden')" class="btn-primary flex-1 text-sm py-2.5">✓ Approve</button>
@@ -147,6 +154,7 @@ async function approveDeposit(depId, userId, amount) {
       t.update(depRef, { status:'success', completed_at: firebase.firestore.FieldValue.serverTimestamp() });
       t.update(userRef, { balance: firebase.firestore.FieldValue.increment(amount) });
       t.set(db.collection('balance_history').doc(), { user_id:userId, type:'deposit', amount, description:'Deposit Manual - Approved by Admin', created_at: firebase.firestore.FieldValue.serverTimestamp() });
+      t.set(db.collection('notifications').doc(), { user_id:userId, title:'Deposit disetujui', message:'Deposit manual Rp '+amount.toLocaleString('id-ID')+' disetujui admin, saldo sudah masuk.', read:false, created_at: firebase.firestore.FieldValue.serverTimestamp() });
     });
     showToast('Deposit berhasil di-approve!','success');
     loadDeposits();

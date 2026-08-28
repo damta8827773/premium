@@ -13,9 +13,9 @@ require_once 'backend/includes/head.php';
       </button>
       <h1 class="text-xl font-bold text-gray-800">Riwayat Pesanan</h1>
     </header>
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <main class="flex-1 overflow-y-auto p-6 bg-app">
       <!-- Search & Filter -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
+      <div class="card-premium p-4 mb-5 flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
           <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke-linecap="round" stroke-width="2"/></svg>
           <input type="text" id="search" placeholder="Cari invoice atau nama produk..." class="input-field pl-10 text-sm" oninput="renderOrders()">
@@ -85,31 +85,25 @@ function renderOrders() {
 
   if (filtered.length === 0) {
     document.getElementById('orders-list').innerHTML = `
-      <div class="text-center py-14 bg-white rounded-2xl border border-gray-100">
+      <div class="text-center py-14 card-premium">
         <svg class="w-14 h-14 mx-auto mb-3 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
         <p class="text-gray-500 font-medium">Belum ada pesanan</p>
         <p class="text-gray-400 text-sm mt-1">Pesanan yang sudah kamu buat akan muncul di sini.</p>
-        <a href="toko.php" class="inline-block mt-4 bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-primary-light transition-colors">Belanja Sekarang</a>
+        <a href="toko-e3514627bb16.php" class="inline-block mt-4 bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-primary-light transition-colors">Belanja Sekarang</a>
       </div>`;
     return;
   }
 
-  const statusMap = {
-    selesai: ['bg-green-100 text-green-700','Selesai'], pending: ['bg-yellow-100 text-yellow-700','Pending'],
-    expired: ['bg-gray-100 text-gray-500','Expired'], batal: ['bg-red-100 text-red-600','Batal'],
-  };
-
   document.getElementById('orders-list').innerHTML = filtered.map(o => {
-    const [sc,sl] = statusMap[o.status] || ['bg-gray-100 text-gray-500',o.status];
     const d = o.created_at ? new Date(o.created_at.seconds*1000).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-';
-    return `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 cursor-pointer hover:shadow-md transition-shadow" onclick="showDetail('${o.id}')">
+    return `<div class="card-premium p-5 cursor-pointer hover:shadow-md transition-shadow" onclick="showDetail('${o.id}')">
       <div class="flex items-start justify-between mb-3">
         <div>
           <p class="text-xs text-gray-400 font-medium">${o.invoice||'-'}</p>
           <p class="font-bold text-gray-800 mt-0.5">${o.product_name||''}</p>
           <p class="text-sm text-gray-500">${o.variant_name||''}</p>
         </div>
-        <span class="text-xs font-semibold px-2.5 py-1 rounded-lg ${sc} flex-shrink-0">${sl}</span>
+        <span class="flex-shrink-0">${statusBadge(o.status)}</span>
       </div>
       <div class="flex items-center justify-between pt-3 border-t border-gray-50">
         <span class="text-xs text-gray-400">${d}</span>
@@ -119,21 +113,47 @@ function renderOrders() {
   }).join('');
 }
 
+function fmtOrderDate(ts) {
+  return ts ? new Date(ts.seconds*1000).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : null;
+}
+
+function renderOrderTimeline(o) {
+  const isFailed = o.status === 'expired' || o.status === 'batal';
+  const steps = [
+    { label: 'Pesanan dibuat', time: fmtOrderDate(o.created_at), done: true },
+    { label: isFailed ? (o.status === 'expired' ? 'Kadaluarsa' : 'Dibatalkan') : 'Selesai & akun diserahkan',
+      time: isFailed ? fmtOrderDate(o.updated_at) : fmtOrderDate(o.completed_at),
+      done: o.status === 'selesai' || isFailed },
+  ];
+  return `<div class="bg-gray-50 rounded-xl p-4 mb-3">
+    ${steps.map((s, i) => `
+      <div class="flex gap-3 ${i < steps.length-1 ? 'pb-4' : ''}">
+        <div class="flex flex-col items-center">
+          <div class="w-3 h-3 rounded-full flex-shrink-0 ${s.done ? (isFailed && i===1 ? 'bg-red-400' : 'bg-primary') : 'bg-gray-300'}"></div>
+          ${i < steps.length-1 ? `<div class="w-0.5 flex-1 ${s.done ? 'bg-primary' : 'bg-gray-200'}" style="min-height:20px"></div>` : ''}
+        </div>
+        <div class="pb-1">
+          <p class="text-sm font-semibold ${s.done ? 'text-gray-800' : 'text-gray-400'}">${s.label}</p>
+          <p class="text-xs text-gray-400">${s.time || (s.done ? '-' : 'Menunggu')}</p>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
 function showDetail(id) {
   const o = allOrders.find(x => x.id === id);
   if (!o) return;
-  const statusMap = {selesai:['bg-green-100 text-green-700','Selesai'],pending:['bg-yellow-100 text-yellow-700','Pending'],expired:['bg-gray-100 text-gray-500','Expired'],batal:['bg-red-100 text-red-600','Batal']};
-  const [sc,sl] = statusMap[o.status] || ['bg-gray-100 text-gray-500',o.status];
   const d = o.created_at ? new Date(o.created_at.seconds*1000).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-';
   document.getElementById('order-detail-content').innerHTML = `
     <div class="space-y-3">
+      ${renderOrderTimeline(o)}
       <div class="bg-gray-50 rounded-xl p-4 space-y-2.5">
         <div class="flex justify-between text-sm"><span class="text-gray-500">Invoice</span><span class="font-semibold text-gray-800">${o.invoice||'-'}</span></div>
         <div class="flex justify-between text-sm"><span class="text-gray-500">Produk</span><span class="font-semibold text-gray-800">${o.product_name||'-'}</span></div>
         <div class="flex justify-between text-sm"><span class="text-gray-500">Varian</span><span class="font-semibold text-gray-800">${o.variant_name||'-'}</span></div>
         <div class="flex justify-between text-sm"><span class="text-gray-500">Harga</span><span class="font-bold text-primary">Rp ${(o.price||0).toLocaleString('id-ID')}</span></div>
         <div class="flex justify-between text-sm"><span class="text-gray-500">Tanggal</span><span class="font-semibold text-gray-800">${d}</span></div>
-        <div class="flex justify-between text-sm"><span class="text-gray-500">Status</span><span class="font-semibold px-2 py-0.5 rounded-lg text-xs ${sc}">${sl}</span></div>
+        <div class="flex justify-between text-sm"><span class="text-gray-500">Status</span>${statusBadge(o.status)}</div>
       </div>
       ${o.status==='selesai' && o.stock_content ? `
       <div class="bg-primary/5 border border-primary/20 rounded-xl p-4">

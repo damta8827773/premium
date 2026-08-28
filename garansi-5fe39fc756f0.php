@@ -11,7 +11,7 @@ require_once 'backend/includes/head.php';
       <button class="lg:hidden text-gray-500" onclick="toggleSidebar()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       <h1 class="text-xl font-bold text-gray-800">Aktivasi Garansi</h1>
     </header>
-    <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <main class="flex-1 overflow-y-auto p-6 bg-app">
       <!-- Info Banner -->
       <div class="bg-primary text-white rounded-2xl p-5 flex gap-3 mb-5">
         <svg class="w-6 h-6 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
@@ -88,22 +88,20 @@ function setFilter(f, btn) {
 function renderWarranties() {
   const filtered = currentFilter === 'semua' ? allWarranties : allWarranties.filter(w => w.status === currentFilter);
   if (!filtered.length) {
-    document.getElementById('warranty-list').innerHTML = `<div class="text-center py-14 bg-white rounded-2xl border border-gray-100">
+    document.getElementById('warranty-list').innerHTML = `<div class="text-center py-14 card-premium">
       <svg class="w-14 h-14 mx-auto mb-3 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
       <p class="text-gray-500 font-medium">Belum ada garansi yang tersedia.</p>
       <p class="text-gray-400 text-sm mt-1">Garansi akan muncul otomatis setelah kamu melakukan pembelian.</p>
     </div>`;
     return;
   }
-  const statusMap = { menunggu:['bg-yellow-100 text-yellow-700','Menunggu'], aktif:['bg-green-100 text-green-700','Aktif'], expired:['bg-gray-100 text-gray-500','Expired'] };
   document.getElementById('warranty-list').innerHTML = `<div class="space-y-3">${filtered.map(w => {
-    const [sc,sl] = statusMap[w.status] || ['bg-gray-100 text-gray-500',w.status];
     const d = w.created_at ? new Date(w.created_at.seconds*1000).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}) : '-';
     const exp = w.expires_at ? new Date(w.expires_at.seconds*1000).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}) : '-';
-    return `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+    return `<div class="card-premium p-5">
       <div class="flex items-start justify-between mb-3">
         <div><p class="font-bold text-gray-800">${w.product_name||''}</p><p class="text-sm text-gray-400 mt-0.5">${w.variant_name||''}</p></div>
-        <span class="text-xs font-semibold px-2.5 py-1 rounded-lg ${sc}">${sl}</span>
+        ${statusBadge(w.status)}
       </div>
       <div class="text-xs text-gray-400 space-y-1">
         <p>Tanggal Pembelian: ${d}</p>
