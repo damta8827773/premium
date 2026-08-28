@@ -75,10 +75,16 @@ let recentMessages = [];
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location.href = 'login.php'; return; }
   currentUser = user;
-  const snap = await db.collection('users').doc(user.uid).get();
-  userProfile = snap.data() || {};
-  await initChat();
-  startPresenceHeartbeat();
+  try {
+    const snap = await db.collection('users').doc(user.uid).get();
+    userProfile = snap.data() || {};
+    await initChat();
+    startPresenceHeartbeat();
+  } catch (e) {
+    console.error('Gagal memuat live chat:', e);
+    document.getElementById('chat-status-label').textContent = 'Gagal memuat chat';
+    showToast('Gagal memuat chat: ' + (e.message || e), 'error');
+  }
 });
 
 async function initChat() {
@@ -129,6 +135,9 @@ function listenChat() {
     renderStatusLabel();
     await renderQueueBanner();
     listenAdminPresence();
+  }, err => {
+    console.error('Gagal memantau status chat:', err);
+    showToast('Gagal memantau status chat: ' + err.message, 'error');
   });
 }
 
@@ -172,6 +181,9 @@ function listenMessages() {
     recentMessages = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderMessages();
     markReadByUser(snap.docs);
+  }, err => {
+    console.error('Gagal memuat pesan:', err);
+    showToast('Gagal memuat pesan: ' + err.message, 'error');
   });
 }
 
@@ -220,7 +232,13 @@ document.getElementById('send-form').addEventListener('submit', async e => {
   const text = input.value.trim();
   if (!text || chatData.status === 'closed') return;
   input.value = '';
-  await sendUserMessage(text);
+  try {
+    await sendUserMessage(text);
+  } catch (err) {
+    console.error('Gagal mengirim pesan:', err);
+    showToast('Gagal mengirim pesan: ' + err.message, 'error');
+    input.value = text;
+  }
 });
 
 async function sendUserMessage(text) {
@@ -286,25 +304,30 @@ async function requestHumanAdmin() {
     showToast('Kamu sudah terhubung ke antrian/admin.', 'info');
     return;
   }
-  await chatRef.collection('messages').add({
-    sender_type: 'user',
-    sender_id: currentUser.uid,
-    sender_name: userProfile.name || currentUser.email,
-    text: '[Meminta bantuan admin manusia]',
-    created_at: firebase.firestore.FieldValue.serverTimestamp(),
-    read_by_user: true,
-    read_by_user_at: firebase.firestore.FieldValue.serverTimestamp(),
-    read_by_admin: false,
-    read_by_admin_at: null,
-  });
-  await chatRef.update({
-    status: 'waiting_admin',
-    escalated_at: firebase.firestore.FieldValue.serverTimestamp(),
-    last_message: 'Meminta bantuan admin manusia',
-    last_message_at: firebase.firestore.FieldValue.serverTimestamp(),
-    unread_admin: true,
-  });
-  showToast('Kamu masuk antrian admin.', 'success');
+  try {
+    await chatRef.collection('messages').add({
+      sender_type: 'user',
+      sender_id: currentUser.uid,
+      sender_name: userProfile.name || currentUser.email,
+      text: '[Meminta bantuan admin manusia]',
+      created_at: firebase.firestore.FieldValue.serverTimestamp(),
+      read_by_user: true,
+      read_by_user_at: firebase.firestore.FieldValue.serverTimestamp(),
+      read_by_admin: false,
+      read_by_admin_at: null,
+    });
+    await chatRef.update({
+      status: 'waiting_admin',
+      escalated_at: firebase.firestore.FieldValue.serverTimestamp(),
+      last_message: 'Meminta bantuan admin manusia',
+      last_message_at: firebase.firestore.FieldValue.serverTimestamp(),
+      unread_admin: true,
+    });
+    showToast('Kamu masuk antrian admin.', 'success');
+  } catch (err) {
+    console.error('Gagal menghubungi admin:', err);
+    showToast('Gagal menghubungi admin: ' + err.message, 'error');
+  }
 }
 
 // Lightweight Firestore-only presence heartbeat (not instant like Realtime DB onDisconnect,

@@ -354,7 +354,7 @@ document.getElementById('forgot-form').addEventListener('submit', async function
   btn.innerHTML = '<span class="spinner"></span>';
   try {
     await auth.sendPasswordResetEmail(email, {
-      url: APP_URL + '/reset-password.php',
+      url: APP_URL + '/reset-password-b0349b43a31f.php',
       handleCodeInApp: true
     });
     showToast('Link reset password sudah dikirim ke email kamu.', 'success');
@@ -374,8 +374,8 @@ auth.onAuthStateChanged(async user => {
   if (!user) return;
   try {
     const s = await db.collection('users').doc(user.uid).get();
-    window.location.href = (s.exists && s.data().role === 'admin') ? 'admin/index.php' : 'dashboard.php';
-  } catch(e) { window.location.href = 'dashboard.php'; }
+    window.location.href = (s.exists && s.data().role === 'admin') ? 'admin/index-488f58d95eb2.php' : 'dashboard-225514cdf1ed.php';
+  } catch(e) { window.location.href = 'dashboard-225514cdf1ed.php'; }
 });
 
 document.getElementById('login-form').addEventListener('submit', async function(e) {
@@ -390,7 +390,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
   try {
     const cred = await auth.signInWithEmailAndPassword(email, password);
     const s = await db.collection('users').doc(cred.user.uid).get();
-    window.location.href = (s.exists && s.data().role === 'admin') ? 'admin/index.php' : 'dashboard.php';
+    window.location.href = (s.exists && s.data().role === 'admin') ? 'admin/index-488f58d95eb2.php' : 'dashboard-225514cdf1ed.php';
   } catch(err) {
     let msg = 'Login gagal. Coba lagi.';
     if (['auth/user-not-found','auth/wrong-password','auth/invalid-credential'].includes(err.code)) msg = 'Email atau password salah.';
@@ -419,7 +419,7 @@ async function loginWithGoogle() {
       });
     }
     const s = await db.collection('users').doc(user.uid).get();
-    window.location.href = (s.exists && s.data().role === 'admin') ? 'admin/index.php' : 'dashboard.php';
+    window.location.href = (s.exists && s.data().role === 'admin') ? 'admin/index-488f58d95eb2.php' : 'dashboard-225514cdf1ed.php';
   } catch(err) {
     if (err.code !== 'auth/popup-closed-by-user') showToast('Login Google gagal. Coba lagi.');
     btn.disabled = false;

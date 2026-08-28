@@ -16,6 +16,19 @@ Built with PHP, Firebase, and Midtrans - featuring buyer & admin dashboards, bal
 
 ---
 
+## Screenshots
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/01-landing-hero.png" alt="Landing page"></td>
+<td width="50%"><img src="docs/screenshots/02-landing-pricing.png" alt="Pricing section"></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/screenshots/03-login.png" alt="Login"></td>
+<td width="50%"><img src="docs/screenshots/04-register.png" alt="Register"></td>
+</tr>
+</table>
+
 ## Overview
 
 Premium Store is a full-featured storefront for digital goods (streaming accounts, design tools, vouchers, and more). Customers register, top up their balance through an integrated payment gateway, purchase products, and file warranty claims - while admins manage products, stock, orders, payments, users, and announcements from a dedicated panel.
@@ -26,8 +39,9 @@ The frontend is server-rendered PHP styled with Tailwind CSS. Authentication and
 
 ### Customer
 - 🔐 **Authentication** - email/password and Google sign-in via Firebase Auth
-- 💰 **Balance deposit** - top up via Midtrans Snap (QRIS, e-wallet, bank transfer, and more)
+- 💰 **Balance deposit** - automatic via Midtrans Snap (QRIS, e-wallet, bank transfer), or manual QRIS with a 1-hour payment window and AI-assisted proof review
 - 🛒 **Store** - browse and buy premium products by category
+- 💬 **Live chat** - Claude-powered assistant first, with one-click handoff to a human admin
 - 🧾 **Order history** - track purchases and balance mutations
 - 🎟️ **Voucher redemption** - redeem promo codes for balance or discounts
 - 🛡️ **Warranty & claims** - submit and follow up on warranty claims
@@ -51,6 +65,7 @@ The frontend is server-rendered PHP styled with Tailwind CSS. Authentication and
 | Backend | PHP 7.4+ |
 | Database & Auth | Firebase (Auth, Firestore, Storage) |
 | Payments | Midtrans Snap + Notification Webhook |
+| AI | Anthropic Claude - live chat assistant & deposit-proof review |
 | Frontend | Server-rendered PHP, Tailwind CSS (CDN), vanilla JavaScript |
 | Web server | Apache (with `.htaccess` clean URLs & hardening) |
 
@@ -76,23 +91,31 @@ premium/
 │   └── image/                 # Static brand assets
 │
 ├── admin/                     # Admin panel pages (products, stock, orders, users…)
+├── docs/screenshots/          # README images
 ├── examples/                  # API client samples in 20 programming languages
 │
 ├── index.php                  # Landing page
 ├── login.php / register.php   # Authentication
-├── dashboard.php              # Customer dashboard
-├── deposit.php                # Balance top-up
-├── toko.php                   # Store
-├── pesanan.php                # Orders
-├── redeem.php                 # Voucher redemption
-├── garansi.php / klaim-garansi.php   # Warranty & claims
-├── riwayat-saldo.php          # Balance history
-├── cek-stok.php               # Stock checker
-├── tools-otp.php              # OTP helper tools
-├── pengumuman.php             # Announcements
-├── kontak-admin.php           # Contact admin
+├── dashboard-<hex>.php        # Customer dashboard
+├── deposit-<hex>.php          # Balance top-up
+├── toko-<hex>.php             # Store
+├── pesanan-<hex>.php          # Orders
+├── redeem-<hex>.php           # Voucher redemption
+├── garansi-<hex>.php / klaim-garansi-<hex>.php   # Warranty & claims
+├── riwayat-saldo-<hex>.php    # Balance history
+├── cek-stok-<hex>.php         # Stock checker
+├── tools-otp-<hex>.php        # OTP helper tools
+├── pengumuman-<hex>.php       # Announcements
+├── kontak-admin-<hex>.php     # Contact admin (live chat)
+├── profil-<hex>.php           # Account profile
 └── .htaccess                  # Apache rewrite & security rules
 ```
+
+> Every authenticated page (buyer + `admin/`) carries a random hex suffix in its
+> filename - e.g. `toko-e3514627bb16.php` - so URLs aren't guessable. Only the
+> public entry points (`index.php`, `login.php`, `register.php`) keep plain
+> names. The actual suffixes are unique to your deployment; the sidebar links
+> are generated from them, never hand-typed.
 
 ## Getting Started
 

@@ -41,7 +41,7 @@ let vouchers=[];
 auth.onAuthStateChanged(async user=>{
   if(!user){window.location.href='../login.php';return;}
   const s=await db.collection('users').doc(user.uid).get();
-  if(!s.exists||s.data().role!=='admin'){window.location.href='../dashboard.php';return;}
+  if(!s.exists||s.data().role!=='admin'){window.location.href='../dashboard-225514cdf1ed.php';return;}
   loadVouchers();
 });
 async function loadVouchers(){

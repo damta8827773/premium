@@ -59,7 +59,7 @@ file_put_contents($status_file, json_encode([
 ]));
 
 // Credit the deposit for real, server-side - this (not the temp file above,
-// and not deposit.php's client) is the actual source of truth for balance.
+// and not deposit-8baa164a7f30.php's client) is the actual source of truth for balance.
 // See backend/includes/firestore-rest.php for why this goes through the
 // Firestore REST API instead of the Admin SDK/Cloud Functions.
 require_once __DIR__ . '/../includes/firestore-rest.php';
@@ -101,6 +101,14 @@ try {
                 'description' => 'Deposit via Midtrans', 'created_at' => FIRESTORE_SERVER_TIMESTAMP,
             ],
             'precondition' => ['exists' => false],
+        ],
+        [
+            'op' => 'set', 'path' => 'notifications/NT' . date('YmdHis') . random_int(100, 999),
+            'fields' => [
+                'user_id' => $user_id, 'title' => 'Deposit berhasil',
+                'message' => 'Deposit Rp ' . number_format($amount, 0, ',', '.') . ' berhasil, saldo sudah masuk.',
+                'read' => false, 'created_at' => FIRESTORE_SERVER_TIMESTAMP,
+            ],
         ],
     ]);
 

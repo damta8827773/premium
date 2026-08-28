@@ -4,7 +4,7 @@
  * POST { code }
  * Header: Authorization: Bearer <Firebase ID token>
  *
- * Previously redeem.php ran this as a client-side Firestore transaction,
+ * Previously redeem-50f75f021d39.php ran this as a client-side Firestore transaction,
  * meaning the credited `amount` could only ever be as trustworthy as the
  * browser choosing to read it correctly from the voucher doc - a tampered
  * client could commit any amount it liked. This endpoint reads the voucher
@@ -116,6 +116,14 @@ try {
                     'created_at' => FIRESTORE_SERVER_TIMESTAMP,
                 ],
                 'precondition' => ['exists' => false],
+            ],
+            [
+                'op' => 'set', 'path' => 'notifications/' . 'NT' . date('YmdHis') . random_int(100, 999),
+                'fields' => [
+                    'user_id' => $uid, 'title' => 'Voucher berhasil',
+                    'message' => 'Voucher ' . $code . ' berhasil dipakai, saldo +Rp ' . number_format($amount, 0, ',', '.') . ' sudah masuk.',
+                    'read' => false, 'created_at' => FIRESTORE_SERVER_TIMESTAMP,
+                ],
             ],
         ]);
 

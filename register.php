@@ -238,6 +238,16 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; display:
         </div>
       </div>
 
+      <!-- Referral code -->
+      <div class="reseller-box" style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:13px;font-weight:700;color:#374151">Kode Referral</span>
+          <span style="font-size:11px;font-weight:600;color:#6b7280;background:#e5e7eb;padding:2px 8px;border-radius:6px">Opsional</span>
+        </div>
+        <p style="color:#9ca3af;font-size:12px;margin-bottom:10px;line-height:1.5">Diajak teman? Masukkan username mereka - kalian berdua dapat bonus saldo.</p>
+        <input type="text" id="reg-referral" class="input-field" placeholder="username teman kamu" style="font-size:13px;font-weight:600">
+      </div>
+
       <!-- Reseller token -->
       <div class="reseller-box">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
@@ -288,7 +298,11 @@ function togglePass(id) {
   i.type = i.type === 'password' ? 'text' : 'password';
 }
 
-auth.onAuthStateChanged(user => { if (user) window.location.href = 'dashboard.php'; });
+auth.onAuthStateChanged(user => { if (user) window.location.href = 'dashboard-225514cdf1ed.php'; });
+
+// Pre-fill the referral field from ?ref=username, if a friend shared a link.
+const refFromUrl = new URLSearchParams(window.location.search).get('ref');
+if (refFromUrl) document.getElementById('reg-referral').value = refFromUrl;
 
 document.getElementById('register-form').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -300,6 +314,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
   const password = document.getElementById('reg-password').value;
   const confirm  = document.getElementById('reg-confirm').value;
   const token    = document.getElementById('reg-token').value.trim().toUpperCase();
+  const referral = document.getElementById('reg-referral').value.trim().toLowerCase();
 
   if (!name || !phone || !email || !username || !password) { showToast('Semua field wajib diisi.'); return; }
   if (password.length < 8) { showToast('Password minimal 8 karakter.'); return; }
@@ -334,8 +349,24 @@ document.getElementById('register-form').addEventListener('submit', async functi
     // collection (see firestore.rules).
     await db.collection('usernames').doc(username).set({ uid: cred.user.uid });
 
-    showToast('Akun berhasil dibuat!', 'success');
-    setTimeout(() => window.location.href = 'dashboard.php', 1200);
+    if (referral && referral !== username) {
+      try {
+        const idToken = await cred.user.getIdToken();
+        const res = await fetch('backend/api/apply-referral.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+          body: JSON.stringify({ referral_code: referral }),
+        });
+        const data = await res.json();
+        if (res.ok) showToast('Akun dibuat! Bonus referral Rp ' + data.bonus.toLocaleString('id-ID') + ' sudah masuk.', 'success');
+        else showToast('Akun berhasil dibuat! (' + (data.error || 'kode referral tidak diterapkan') + ')', 'success');
+      } catch (e) {
+        showToast('Akun berhasil dibuat!', 'success');
+      }
+    } else {
+      showToast('Akun berhasil dibuat!', 'success');
+    }
+    setTimeout(() => window.location.href = 'dashboard-225514cdf1ed.php', 1200);
   } catch(err) {
     let msg = 'Pendaftaran gagal.';
     if (err.code === 'auth/email-already-in-use') msg = 'Email sudah terdaftar.';

@@ -32,7 +32,7 @@ RewriteRule ^\.      - [F,L]
 # (scoped to backend/api/ only - a bare <FilesMatch> here would match every
 # .php file on the whole site, not just this directory)
 RewriteCond %{REQUEST_URI} ^/backend/api/
-RewriteCond %{REQUEST_URI} !^/backend/api/(midtrans-create|midtrans-notify|check-payment|ai-chat-reply|checkout|redeem-voucher)\.php$
+RewriteCond %{REQUEST_URI} !^/backend/api/(midtrans-create|midtrans-notify|check-payment|ai-chat-reply|checkout|redeem-voucher|analyze-deposit-proof|apply-referral)\.php$
 RewriteRule ^backend/api/.*\.php$ - [F,L]
 
 # Cache static assets

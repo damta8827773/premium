@@ -10,12 +10,25 @@ $cp = $current_page ?? '';
 
   <!-- Logo -->
   <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10">
-    <div class="w-9 h-9 bg-white rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden ring-1 ring-gold/40 shadow-[0_0_16px_rgba(234,179,8,0.25)]">
-      <img src="<?= $base_path ?? '' ?>frontend/image/AlightMotion_logo.png" alt="Logo" class="w-6 h-6 object-contain" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=\'text-primary font-bold text-sm\'>P</span>'">
+    <div class="w-9 h-9 bg-white rounded-lg flex items-center justify-center flex-shrink-0 ring-1 ring-gold/40 shadow-[0_0_16px_rgba(234,179,8,0.25)]">
+      <span class="text-primary font-bold text-base">P</span>
     </div>
-    <div>
+    <div class="flex-1 min-w-0">
       <div class="text-white font-bold text-base leading-none">PREMIUM</div>
       <div class="text-gold/70 text-xs mt-0.5 tracking-wide">BUYER PANEL</div>
+    </div>
+    <div class="relative flex-shrink-0">
+      <button onclick="toggleNotifPanel()" title="Notifikasi" class="relative text-white/60 hover:text-white transition-colors p-1">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <span id="notif-badge" class="hidden absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] font-bold rounded-full min-w-[15px] h-[15px] flex items-center justify-center px-0.5">0</span>
+      </button>
+      <div id="notif-panel" class="hidden absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 max-h-96 overflow-y-auto">
+        <div class="p-3 border-b border-gray-50 flex items-center justify-between">
+          <span class="text-xs font-bold text-gray-700">Notifikasi</span>
+          <button onclick="markAllNotifsRead()" class="text-[10px] text-primary font-semibold hover:underline">Tandai semua dibaca</button>
+        </div>
+        <div id="notif-list"><p class="text-xs text-gray-400 text-center py-6">Memuat...</p></div>
+      </div>
     </div>
   </div>
 
@@ -25,7 +38,7 @@ $cp = $current_page ?? '';
     <!-- MENU UTAMA -->
     <p class="menu-section-label">Menu Utama</p>
 
-    <a href="<?= $base_path ?? '' ?>dashboard.php" class="<?= $cp==='dashboard'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>dashboard-225514cdf1ed.php" class="<?= $cp==='dashboard'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg>
       Dashboard
     </a>
@@ -37,7 +50,7 @@ $cp = $current_page ?? '';
         <svg id="arrow-tools" class="w-3.5 h-3.5 ml-auto transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </button>
       <div id="menu-tools" class="submenu pl-4">
-        <a href="<?= $base_path ?? '' ?>tools-otp.php" class="<?= $cp==='otp'?'text-white':'text-white/60 hover:text-white' ?> flex items-center gap-2 px-3 py-2 text-sm transition-all">
+        <a href="<?= $base_path ?? '' ?>tools-otp-7c62d93c39f2.php" class="<?= $cp==='otp'?'text-white':'text-white/60 hover:text-white' ?> flex items-center gap-2 px-3 py-2 text-sm transition-all">
           <span class="w-1 h-1 bg-current rounded-full"></span> OTP Tool
         </a>
       </div>
@@ -53,18 +66,18 @@ $cp = $current_page ?? '';
         <svg id="arrow-katalog" class="w-3.5 h-3.5 ml-auto transition-transform <?= in_array($cp,['toko','stok'])?'rotate-90':'' ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </button>
       <div id="menu-katalog" class="submenu <?= in_array($cp,['toko','stok'])?'open':'' ?> pl-4">
-        <a href="<?= $base_path ?? '' ?>toko.php" class="<?= $cp==='toko'?'text-white font-semibold':'text-white/60 hover:text-white' ?> flex items-center gap-2 px-3 py-2 text-sm transition-all">
+        <a href="<?= $base_path ?? '' ?>toko-e3514627bb16.php" class="<?= $cp==='toko'?'text-white font-semibold':'text-white/60 hover:text-white' ?> flex items-center gap-2 px-3 py-2 text-sm transition-all">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
           Toko
         </a>
-        <a href="<?= $base_path ?? '' ?>cek-stok.php" class="<?= $cp==='stok'?'text-white font-semibold':'text-white/60 hover:text-white' ?> flex items-center gap-2 px-3 py-2 text-sm transition-all">
+        <a href="<?= $base_path ?? '' ?>cek-stok-6af04b0b29b4.php" class="<?= $cp==='stok'?'text-white font-semibold':'text-white/60 hover:text-white' ?> flex items-center gap-2 px-3 py-2 text-sm transition-all">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
           Cek Stock
         </a>
       </div>
     </div>
 
-    <a href="<?= $base_path ?? '' ?>pesanan.php" class="<?= $cp==='pesanan'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>pesanan-1088155b6b28.php" class="<?= $cp==='pesanan'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
       Riwayat Pesanan
     </a>
@@ -72,17 +85,17 @@ $cp = $current_page ?? '';
     <!-- KEUANGAN -->
     <p class="menu-section-label mt-3">Keuangan</p>
 
-    <a href="<?= $base_path ?? '' ?>deposit.php" class="<?= $cp==='deposit'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>deposit-8baa164a7f30.php" class="<?= $cp==='deposit'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       Deposit Saldo
     </a>
 
-    <a href="<?= $base_path ?? '' ?>riwayat-saldo.php" class="<?= $cp==='riwayat-saldo'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>riwayat-saldo-1cd5a41c51de.php" class="<?= $cp==='riwayat-saldo'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
       Riwayat Saldo
     </a>
 
-    <a href="<?= $base_path ?? '' ?>redeem.php" class="<?= $cp==='redeem'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>redeem-50f75f021d39.php" class="<?= $cp==='redeem'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
       Redeem Voucher
     </a>
@@ -90,12 +103,12 @@ $cp = $current_page ?? '';
     <!-- LAYANAN -->
     <p class="menu-section-label mt-3">Layanan</p>
 
-    <a href="<?= $base_path ?? '' ?>garansi.php" class="<?= $cp==='garansi'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>garansi-5fe39fc756f0.php" class="<?= $cp==='garansi'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
       Aktivasi Garansi
     </a>
 
-    <a href="<?= $base_path ?? '' ?>klaim-garansi.php" class="<?= $cp==='klaim'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>klaim-garansi-e2f5db588ead.php" class="<?= $cp==='klaim'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
       Claim Garansi
     </a>
@@ -103,12 +116,12 @@ $cp = $current_page ?? '';
     <!-- LAINNYA -->
     <p class="menu-section-label mt-3">Lainnya</p>
 
-    <a href="<?= $base_path ?? '' ?>pengumuman.php" class="<?= $cp==='pengumuman'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>pengumuman-fbe6207ef30b.php" class="<?= $cp==='pengumuman'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
       Pengumuman
     </a>
 
-    <a href="<?= $base_path ?? '' ?>kontak-admin.php" class="<?= $cp==='kontak'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>kontak-admin-032aeb00e964.php" class="<?= $cp==='kontak'?'bg-gradient-to-r from-gold/20 via-gold/5 to-transparent text-white shadow-[inset_2px_0_0_0_#EAB308]':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/></svg>
       Kontak Admin
     </a>
@@ -117,12 +130,14 @@ $cp = $current_page ?? '';
 
   <!-- User Profile -->
   <div class="border-t border-white/10 px-4 py-4 flex items-center gap-3">
-    <div id="sidebar-avatar" class="w-9 h-9 rounded-full bg-gold flex items-center justify-center text-black font-bold text-sm flex-shrink-0 ring-2 ring-gold/30 ring-offset-2 ring-offset-primary">?</div>
-    <div class="flex-1 min-w-0">
-      <div id="sidebar-name" class="text-white text-sm font-semibold truncate">Loading...</div>
-      <div id="sidebar-role" class="text-white/50 text-xs">Buyer</div>
-    </div>
-    <button onclick="doLogout()" title="Logout" class="text-white/50 hover:text-red-400 transition-colors">
+    <a href="<?= $base_path ?? '' ?>profil-b70ddc05fe5a.php" class="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity" title="Lihat profil">
+      <div id="sidebar-avatar" class="w-9 h-9 rounded-full bg-gold flex items-center justify-center text-black font-bold text-sm flex-shrink-0 ring-2 ring-gold/30 ring-offset-2 ring-offset-primary overflow-hidden">?</div>
+      <div class="flex-1 min-w-0">
+        <div id="sidebar-name" class="text-white text-sm font-semibold truncate">Loading...</div>
+        <div id="sidebar-role" class="text-white/50 text-xs">Buyer</div>
+      </div>
+    </a>
+    <button onclick="doLogout()" title="Logout" class="text-white/50 hover:text-red-400 transition-colors flex-shrink-0">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
     </button>
   </div>
@@ -140,5 +155,56 @@ function toggleSidebar() {
   const o = document.getElementById('sidebar-overlay');
   s.classList.toggle('-translate-x-full');
   o.classList.toggle('hidden');
+}
+
+// ===== Notifications =====
+let sidebarNotifs = [];
+
+auth.onAuthStateChanged(user => {
+  if (!user) return;
+  db.collection('notifications').where('user_id', '==', user.uid).orderBy('created_at', 'desc').limit(20)
+    .onSnapshot(snap => {
+      sidebarNotifs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderNotifs();
+    }, () => {});
+});
+
+function renderNotifs() {
+  const unread = sidebarNotifs.filter(n => !n.read).length;
+  const badge = document.getElementById('notif-badge');
+  badge.textContent = unread > 9 ? '9+' : unread;
+  badge.classList.toggle('hidden', unread === 0);
+
+  const list = document.getElementById('notif-list');
+  if (!sidebarNotifs.length) { list.innerHTML = '<p class="text-xs text-gray-400 text-center py-6">Belum ada notifikasi.</p>'; return; }
+  list.innerHTML = sidebarNotifs.map(n => {
+    const d = n.created_at ? new Date(n.created_at.seconds * 1000).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+    return `<div onclick="readNotif('${n.id}')" class="p-3 border-b border-gray-50 cursor-pointer hover:bg-gray-50 ${n.read ? '' : 'bg-primary/5'}">
+      <div class="flex items-start gap-2">
+        ${!n.read ? '<span class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0"></span>' : '<span class="w-1.5 h-1.5 flex-shrink-0"></span>'}
+        <div class="min-w-0">
+          <p class="text-xs font-bold text-gray-800">${n.title || ''}</p>
+          <p class="text-xs text-gray-500 mt-0.5">${n.message || ''}</p>
+          <p class="text-[10px] text-gray-300 mt-1">${d}</p>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleNotifPanel() {
+  document.getElementById('notif-panel').classList.toggle('hidden');
+}
+document.addEventListener('click', e => {
+  const panel = document.getElementById('notif-panel');
+  if (!panel || panel.classList.contains('hidden')) return;
+  if (!e.target.closest('#notif-panel') && !e.target.closest('[onclick="toggleNotifPanel()"]')) panel.classList.add('hidden');
+});
+
+function readNotif(id) {
+  db.collection('notifications').doc(id).update({ read: true }).catch(() => {});
+}
+function markAllNotifsRead() {
+  sidebarNotifs.filter(n => !n.read).forEach(n => db.collection('notifications').doc(n.id).update({ read: true }).catch(() => {}));
 }
 </script>

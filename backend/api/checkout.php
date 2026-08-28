@@ -4,7 +4,7 @@
  * POST { product_id, variant_id }
  * Header: Authorization: Bearer <Firebase ID token>
  *
- * This used to happen entirely client-side (see toko.php git history):
+ * This used to happen entirely client-side (see toko-e3514627bb16.php git history):
  * the browser read an unused stock_items doc directly (exposing the
  * delivered account credentials of every unsold item to any signed-in
  * user) and decremented its own balance with nothing server-side ever
@@ -151,6 +151,14 @@ try {
                     'created_at' => FIRESTORE_SERVER_TIMESTAMP,
                 ],
                 'precondition' => ['exists' => false],
+            ],
+            [
+                'op' => 'set', 'path' => 'notifications/' . checkout_generate_id('NT'),
+                'fields' => [
+                    'user_id' => $uid, 'title' => 'Pesanan berhasil',
+                    'message' => ($product['fields']['name'] ?? 'Produk') . ' - ' . ($variant['fields']['name'] ?? '') . ' sudah aktif, cek riwayat pesanan.',
+                    'read' => false, 'created_at' => FIRESTORE_SERVER_TIMESTAMP,
+                ],
             ],
         ]);
 

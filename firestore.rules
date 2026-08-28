@@ -121,7 +121,7 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // Owner may only ever create a deposit as 'pending' (deposit.php does
+    // Owner may only ever create a deposit as 'pending' (deposit-8baa164a7f30.php does
     // this before redirecting to Midtrans/uploading manual proof). The
     // transition to 'success' is server-only: midtrans-notify.php for
     // Midtrans deposits, an admin approving a manual one.
@@ -186,6 +186,21 @@ service cloud.firestore {
     match /presence/{uid} {
       allow read: if isSignedIn();
       allow write: if isOwner(uid);
+    }
+
+    // Written by the service account (checkout.php, midtrans-notify.php,
+    // redeem-voucher.php) for purchase/deposit/voucher events, or directly
+    // by an admin's own client session (deposit approval, chat replies) -
+    // isAdmin() covers both since the service account bypasses rules
+    // entirely anyway. Owner may only toggle their own `read` flag.
+    match /notifications/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.user_id == request.auth.uid);
+      allow create: if isAdmin();
+      allow update: if isAdmin() || (
+        isSignedIn() && resource.data.user_id == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read'])
+      );
+      allow delete: if false;
     }
   }
 }

@@ -22,7 +22,7 @@ require_once 'backend/includes/head.php';
           <div class="shimmer"></div>
           <p class="text-white/60 text-xs font-medium mb-1 relative">SALDO KAMU</p>
           <p id="user-balance" class="text-3xl font-bold text-white relative">Rp 0</p>
-          <a href="riwayat-saldo.php" class="inline-block mt-3 text-white/60 text-xs hover:text-white transition-colors relative">Lihat riwayat →</a>
+          <a href="riwayat-saldo-1cd5a41c51de.php" class="inline-block mt-3 text-white/60 text-xs hover:text-white transition-colors relative">Lihat riwayat →</a>
         </div>
 
         <!-- Info -->
@@ -73,15 +73,12 @@ require_once 'backend/includes/head.php';
         <!-- Manual upload (hidden by default) -->
         <div id="manual-section" class="card-premium p-5 hidden">
           <p class="font-bold text-gray-800 mb-3">QRIS untuk Pembayaran Manual</p>
-          <div class="grid grid-cols-2 gap-4 mb-4">
-            <div class="text-center">
-              <img src="frontend/image/qris 1.png" alt="QRIS 1" class="w-full max-w-[160px] mx-auto rounded-xl border border-gray-200">
-              <p class="text-xs text-gray-400 mt-2">QRIS 1</p>
-            </div>
-            <div class="text-center">
-              <img src="frontend/image/qris 2.png" alt="QRIS 2" class="w-full max-w-[160px] mx-auto rounded-xl border border-gray-200">
-              <p class="text-xs text-gray-400 mt-2">QRIS 2</p>
-            </div>
+          <div class="text-center mb-3">
+            <img id="qris-img" src="" alt="QRIS" class="w-full max-w-[200px] mx-auto rounded-xl border border-gray-200">
+          </div>
+          <div id="qris-timer" class="text-center mb-4">
+            <p class="text-xs text-gray-400">Selesaikan pembayaran dalam</p>
+            <p id="qris-timer-text" class="text-xl font-bold text-primary tabular-nums">60:00</p>
           </div>
           <div class="bg-yellow-50 border border-yellow-100 rounded-xl p-3 text-xs text-yellow-700 mb-4">
             Scan QRIS di atas sesuai nominal, lalu upload bukti pembayaran (screenshot) di bawah ini.
@@ -95,6 +92,7 @@ require_once 'backend/includes/head.php';
           <input type="file" id="proof-input" accept="image/*" class="hidden" onchange="previewProof(this)">
           <img id="proof-preview" class="hidden mt-3 rounded-xl max-h-48 mx-auto border" alt="Preview">
           <input type="text" id="manual-note" placeholder="Catatan (opsional)" class="input-field text-sm mt-3">
+          <div id="ai-analysis-box" class="hidden mt-3 rounded-xl p-3 text-xs"></div>
         </div>
 
         <!-- Submit -->
@@ -115,6 +113,38 @@ let selectedAmount = 0;
 let selectedMethod = 'midtrans';
 let currentUser = null;
 let proofFile = null;
+let chosenQris = null;
+let qrisExpiresAt = null;
+let qrisTimerInterval = null;
+
+const QRIS_OPTIONS = [
+  { id: 'qris1', file: 'frontend/image/qris 1.png' },
+  { id: 'qris2', file: 'frontend/image/qris 2.png' },
+];
+
+function startQrisSession() {
+  chosenQris = QRIS_OPTIONS[Math.floor(Math.random() * QRIS_OPTIONS.length)];
+  document.getElementById('qris-img').src = chosenQris.file;
+  qrisExpiresAt = Date.now() + 60 * 60 * 1000;
+  document.getElementById('ai-analysis-box').classList.add('hidden');
+  if (qrisTimerInterval) clearInterval(qrisTimerInterval);
+  qrisTimerInterval = setInterval(tickQrisTimer, 1000);
+  tickQrisTimer();
+}
+
+function tickQrisTimer() {
+  const remaining = Math.max(0, qrisExpiresAt - Date.now());
+  const mins = Math.floor(remaining / 60000);
+  const secs = Math.floor((remaining % 60000) / 1000);
+  const textEl = document.getElementById('qris-timer-text');
+  if (textEl) textEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+  if (remaining <= 0) {
+    clearInterval(qrisTimerInterval);
+    if (textEl) textEl.textContent = 'Kadaluarsa';
+    showToast('Sesi QRIS kadaluarsa, pilih nominal lagi untuk sesi baru.', 'error');
+    document.getElementById('btn-deposit').disabled = true;
+  }
+}
 
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location.href = 'login.php'; return; }
@@ -132,6 +162,11 @@ function selectMethod(method) {
   event.currentTarget.closest('label').querySelector('.method-box').className =
     event.currentTarget.closest('label').querySelector('.method-box').className.replace('border-gray-200','border-primary bg-primary/5');
   document.getElementById('manual-section').classList.toggle('hidden', method !== 'manual');
+  if (method === 'manual') {
+    startQrisSession();
+  } else if (qrisTimerInterval) {
+    clearInterval(qrisTimerInterval);
+  }
   updateBtn();
 }
 
@@ -149,7 +184,8 @@ function setCustomAmount(val) {
 }
 function updateBtn() {
   const btn = document.getElementById('btn-deposit');
-  btn.disabled = selectedAmount < 1000;
+  const qrisExpired = selectedMethod === 'manual' && qrisExpiresAt && Date.now() > qrisExpiresAt;
+  btn.disabled = selectedAmount < 1000 || qrisExpired;
   btn.textContent = selectedMethod === 'manual' ? 'Kirim Bukti Pembayaran' : 'Lanjut ke Pembayaran';
 }
 
@@ -225,6 +261,7 @@ async function payMidtrans() {
 
 async function payManual() {
   if (!proofFile) { showToast('Upload bukti pembayaran terlebih dahulu','error'); return; }
+  if (qrisExpiresAt && Date.now() > qrisExpiresAt) { showToast('Sesi QRIS sudah kadaluarsa, pilih nominal lagi.','error'); return; }
   try {
     const orderId = 'MAN-' + currentUser.uid.slice(0,8) + '-' + Date.now();
     // Upload proof to Firebase Storage
@@ -235,14 +272,40 @@ async function payManual() {
     await db.collection('deposits').doc(orderId).set({
       id: orderId, user_id: currentUser.uid, amount: selectedAmount,
       method: 'manual', status: 'pending', proof_image: proofUrl,
+      qris_used: chosenQris ? chosenQris.id : null,
       note: document.getElementById('manual-note').value || '',
       created_at: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     showToast('Bukti pembayaran terkirim! Menunggu konfirmasi admin.','success');
-    setTimeout(() => window.location.href = 'riwayat-saldo.php', 2000);
+    if (qrisTimerInterval) clearInterval(qrisTimerInterval);
+    analyzeProofWithAI(orderId);
+    setTimeout(() => window.location.href = 'riwayat-saldo-1cd5a41c51de.php', 3500);
   } catch(e) {
     showToast('Gagal mengirim bukti: ' + (e.message || 'Coba lagi'),'error');
+  }
+}
+
+async function analyzeProofWithAI(depositId) {
+  const box = document.getElementById('ai-analysis-box');
+  box.className = 'mt-3 rounded-xl p-3 text-xs bg-gray-50 text-gray-500';
+  box.textContent = 'AI sedang memeriksa bukti pembayaran...';
+  box.classList.remove('hidden');
+  try {
+    const idToken = await currentUser.getIdToken();
+    const res = await fetch('backend/api/analyze-deposit-proof.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify({ deposit_id: depositId }),
+    });
+    const data = await res.json();
+    if (!res.ok) { box.textContent = data.error || 'AI belum bisa memeriksa bukti ini.'; return; }
+    const a = data.analysis;
+    const ok = a.looks_like_payment_proof && a.matches_expected_amount !== false;
+    box.className = 'mt-3 rounded-xl p-3 text-xs ' + (ok ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700');
+    box.textContent = '🤖 ' + (a.notes || 'Analisa selesai') + ' Admin tetap yang memverifikasi & approve akhir.';
+  } catch (e) {
+    box.textContent = 'AI belum bisa memeriksa bukti ini, tidak masalah - admin tetap akan meninjau manual.';
   }
 }
 </script>

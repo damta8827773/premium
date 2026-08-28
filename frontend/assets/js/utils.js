@@ -89,6 +89,21 @@ function statusBadge(status) {
   return `<span class="status-pill" data-status="${status}">${label}</span>`;
 }
 
+// ===== AVATAR (Google profile photo, else Gravatar keyed off the registered email) =====
+async function gravatarUrl(email) {
+  const clean = (email || '').trim().toLowerCase();
+  const enc = new TextEncoder().encode(clean);
+  const hashBuf = await crypto.subtle.digest('SHA-256', enc);
+  const hex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return `https://www.gravatar.com/avatar/${hex}?d=404&s=80`;
+}
+function setAvatarImage(el, url) {
+  const img = new Image();
+  img.onload = () => { el.innerHTML = ''; img.className = 'w-full h-full object-cover'; el.appendChild(img); };
+  img.onerror = () => {}; // keep the initial-letter fallback already in place
+  img.src = url;
+}
+
 // ===== UPDATE SIDEBAR USER INFO =====
 auth.onAuthStateChanged(async user => {
   if (!user) return;
@@ -105,7 +120,14 @@ auth.onAuthStateChanged(async user => {
 
     if (nameEl) nameEl.textContent = displayName;
     if (adminNameEl) adminNameEl.textContent = displayName;
-    if (avatarEl) { avatarEl.textContent = initial; }
+    if (avatarEl) {
+      avatarEl.textContent = initial;
+      if (user.photoURL) {
+        setAvatarImage(avatarEl, user.photoURL);
+      } else {
+        gravatarUrl(data.email || user.email).then(url => setAvatarImage(avatarEl, url)).catch(() => {});
+      }
+    }
     if (roleEl) roleEl.textContent = data.is_reseller ? 'Reseller' : 'Buyer';
   } catch(e) {
     if (nameEl && user.displayName) nameEl.textContent = user.displayName;

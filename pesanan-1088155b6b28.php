@@ -89,7 +89,7 @@ function renderOrders() {
         <svg class="w-14 h-14 mx-auto mb-3 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
         <p class="text-gray-500 font-medium">Belum ada pesanan</p>
         <p class="text-gray-400 text-sm mt-1">Pesanan yang sudah kamu buat akan muncul di sini.</p>
-        <a href="toko.php" class="inline-block mt-4 bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-primary-light transition-colors">Belanja Sekarang</a>
+        <a href="toko-e3514627bb16.php" class="inline-block mt-4 bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-primary-light transition-colors">Belanja Sekarang</a>
       </div>`;
     return;
   }
@@ -113,12 +113,40 @@ function renderOrders() {
   }).join('');
 }
 
+function fmtOrderDate(ts) {
+  return ts ? new Date(ts.seconds*1000).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : null;
+}
+
+function renderOrderTimeline(o) {
+  const isFailed = o.status === 'expired' || o.status === 'batal';
+  const steps = [
+    { label: 'Pesanan dibuat', time: fmtOrderDate(o.created_at), done: true },
+    { label: isFailed ? (o.status === 'expired' ? 'Kadaluarsa' : 'Dibatalkan') : 'Selesai & akun diserahkan',
+      time: isFailed ? fmtOrderDate(o.updated_at) : fmtOrderDate(o.completed_at),
+      done: o.status === 'selesai' || isFailed },
+  ];
+  return `<div class="bg-gray-50 rounded-xl p-4 mb-3">
+    ${steps.map((s, i) => `
+      <div class="flex gap-3 ${i < steps.length-1 ? 'pb-4' : ''}">
+        <div class="flex flex-col items-center">
+          <div class="w-3 h-3 rounded-full flex-shrink-0 ${s.done ? (isFailed && i===1 ? 'bg-red-400' : 'bg-primary') : 'bg-gray-300'}"></div>
+          ${i < steps.length-1 ? `<div class="w-0.5 flex-1 ${s.done ? 'bg-primary' : 'bg-gray-200'}" style="min-height:20px"></div>` : ''}
+        </div>
+        <div class="pb-1">
+          <p class="text-sm font-semibold ${s.done ? 'text-gray-800' : 'text-gray-400'}">${s.label}</p>
+          <p class="text-xs text-gray-400">${s.time || (s.done ? '-' : 'Menunggu')}</p>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
 function showDetail(id) {
   const o = allOrders.find(x => x.id === id);
   if (!o) return;
   const d = o.created_at ? new Date(o.created_at.seconds*1000).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-';
   document.getElementById('order-detail-content').innerHTML = `
     <div class="space-y-3">
+      ${renderOrderTimeline(o)}
       <div class="bg-gray-50 rounded-xl p-4 space-y-2.5">
         <div class="flex justify-between text-sm"><span class="text-gray-500">Invoice</span><span class="font-semibold text-gray-800">${o.invoice||'-'}</span></div>
         <div class="flex justify-between text-sm"><span class="text-gray-500">Produk</span><span class="font-semibold text-gray-800">${o.product_name||'-'}</span></div>
