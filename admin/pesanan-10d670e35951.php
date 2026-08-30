@@ -34,7 +34,7 @@ let allOrders=[], filter='semua';
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location.href='../login.php'; return; }
   const snap = await db.collection('users').doc(user.uid).get();
-  if (!snap.exists||snap.data().role!=='admin') { window.location.href='../dashboard-225514cdf1ed.php'; return; }
+  if (!snap.exists||snap.data().role!=='admin') { window.location.href='../dashboard/225514cdf1ed'; return; }
   const ordSnap = await db.collection('orders').orderBy('created_at','desc').limit(500).get();
   allOrders = ordSnap.docs.map(d=>({id:d.id,...d.data()}));
   renderOrders();

@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<base href="/">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= $page_title ?></title>
@@ -298,7 +299,7 @@ function togglePass(id) {
   i.type = i.type === 'password' ? 'text' : 'password';
 }
 
-auth.onAuthStateChanged(user => { if (user) window.location.href = 'dashboard-225514cdf1ed.php'; });
+auth.onAuthStateChanged(user => { if (user) window.location.href = 'dashboard/225514cdf1ed'; });
 
 // Pre-fill the referral field from ?ref=username, if a friend shared a link.
 const refFromUrl = new URLSearchParams(window.location.search).get('ref');
@@ -366,7 +367,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
     } else {
       showToast('Akun berhasil dibuat!', 'success');
     }
-    setTimeout(() => window.location.href = 'dashboard-225514cdf1ed.php', 1200);
+    setTimeout(() => window.location.href = 'dashboard/225514cdf1ed', 1200);
   } catch(err) {
     let msg = 'Pendaftaran gagal.';
     if (err.code === 'auth/email-already-in-use') msg = 'Email sudah terdaftar.';

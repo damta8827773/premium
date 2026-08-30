@@ -89,7 +89,7 @@ function renderOrders() {
         <svg class="w-14 h-14 mx-auto mb-3 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
         <p class="text-gray-500 font-medium">Belum ada pesanan</p>
         <p class="text-gray-400 text-sm mt-1">Pesanan yang sudah kamu buat akan muncul di sini.</p>
-        <a href="toko-e3514627bb16.php" class="inline-block mt-4 bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-primary-light transition-colors">Belanja Sekarang</a>
+        <a href="toko/e3514627bb16" class="inline-block mt-4 bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-primary-light transition-colors">Belanja Sekarang</a>
       </div>`;
     return;
   }

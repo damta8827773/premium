@@ -61,7 +61,7 @@ async function loadStock() {
       p.variants = [];
       for (const v of vSnap.docs) {
         const vd = { id: v.id, ...v.data() };
-        // Uses the variant's own stock counter (same one toko-e3514627bb16.php's catalog
+        // Uses the variant's own stock counter (same one toko/e3514627bb16's catalog
         // shows) instead of querying stock_items directly - that collection
         // holds the actual delivered account credentials and is admin-only
         // to read now, see firestore.rules.

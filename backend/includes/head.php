@@ -2,6 +2,13 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <!-- Obfuscated page URLs (/toko/hexsuffix, /admin/produk/hexsuffix) look
+       like nested directories to the browser's relative-URL resolver, even
+       though every asset/link/fetch() reference in this app is written
+       relative to the site root. <base> re-anchors all of that resolution
+       to "/" regardless of how deep the current URL appears - must be the
+       first element in <head> per the HTML spec. -->
+  <base href="/">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= htmlspecialchars($page_title ?? 'Premium App') ?></title>

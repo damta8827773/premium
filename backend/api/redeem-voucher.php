@@ -4,7 +4,7 @@
  * POST { code }
  * Header: Authorization: Bearer <Firebase ID token>
  *
- * Previously redeem-50f75f021d39.php ran this as a client-side Firestore transaction,
+ * Previously redeem/50f75f021d39 ran this as a client-side Firestore transaction,
  * meaning the credited `amount` could only ever be as trustworthy as the
  * browser choosing to read it correctly from the voucher doc - a tampered
  * client could commit any amount it liked. This endpoint reads the voucher

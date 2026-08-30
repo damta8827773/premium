@@ -22,7 +22,7 @@ require_once 'backend/includes/head.php';
           <div class="shimmer"></div>
           <p class="text-white/60 text-xs font-medium mb-1 relative">SALDO KAMU</p>
           <p id="user-balance" class="text-3xl font-bold text-white relative">Rp 0</p>
-          <a href="riwayat-saldo-1cd5a41c51de.php" class="inline-block mt-3 text-white/60 text-xs hover:text-white transition-colors relative">Lihat riwayat →</a>
+          <a href="riwayat-saldo/1cd5a41c51de" class="inline-block mt-3 text-white/60 text-xs hover:text-white transition-colors relative">Lihat riwayat →</a>
         </div>
 
         <!-- Info -->
@@ -280,7 +280,7 @@ async function payManual() {
     showToast('Bukti pembayaran terkirim! Menunggu konfirmasi admin.','success');
     if (qrisTimerInterval) clearInterval(qrisTimerInterval);
     analyzeProofWithAI(orderId);
-    setTimeout(() => window.location.href = 'riwayat-saldo-1cd5a41c51de.php', 3500);
+    setTimeout(() => window.location.href = 'riwayat-saldo/1cd5a41c51de', 3500);
   } catch(e) {
     showToast('Gagal mengirim bukti: ' + (e.message || 'Coba lagi'),'error');
   }

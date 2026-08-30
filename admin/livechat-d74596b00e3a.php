@@ -79,7 +79,7 @@ document.addEventListener('click', () => { try { getAudioCtx().resume(); } catch
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location.href = '../login.php'; return; }
   const snap = await db.collection('users').doc(user.uid).get();
-  if (!snap.exists || snap.data().role !== 'admin') { window.location.href = '../dashboard-225514cdf1ed.php'; return; }
+  if (!snap.exists || snap.data().role !== 'admin') { window.location.href = '../dashboard/225514cdf1ed'; return; }
   adminUser = user;
   adminProfile = snap.data();
   document.getElementById('admin-name').textContent = adminProfile.name || 'Admin';

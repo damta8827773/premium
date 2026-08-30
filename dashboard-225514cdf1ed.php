@@ -77,25 +77,25 @@ require_once 'backend/includes/head.php';
           <div class="card-premium p-5 mb-5">
             <h2 class="text-base font-bold text-gray-800 mb-4">Aksi Cepat</h2>
             <div class="grid grid-cols-2 gap-3">
-              <a href="toko-e3514627bb16.php" class="flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-gray-100 hover:border-primary hover:bg-primary/5 transition-all text-center">
+              <a href="toko/e3514627bb16" class="flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-gray-100 hover:border-primary hover:bg-primary/5 transition-all text-center">
                 <div class="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center">
                   <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                 </div>
                 <span class="text-xs font-semibold text-gray-700">Toko</span>
               </a>
-              <a href="deposit-8baa164a7f30.php" class="flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-gray-100 hover:border-gold hover:bg-gold/5 transition-all text-center">
+              <a href="deposit/8baa164a7f30" class="flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-gray-100 hover:border-gold hover:bg-gold/5 transition-all text-center">
                 <div class="w-9 h-9 bg-gold/10 rounded-xl flex items-center justify-center">
                   <svg class="w-5 h-5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
                 <span class="text-xs font-semibold text-gray-700">Deposit</span>
               </a>
-              <a href="pesanan-1088155b6b28.php" class="flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-gray-100 hover:border-blue-400 hover:bg-blue-50 transition-all text-center">
+              <a href="pesanan/1088155b6b28" class="flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-gray-100 hover:border-blue-400 hover:bg-blue-50 transition-all text-center">
                 <div class="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center">
                   <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                 </div>
                 <span class="text-xs font-semibold text-gray-700">Pesanan</span>
               </a>
-              <a href="garansi-5fe39fc756f0.php" class="flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-gray-100 hover:border-green-400 hover:bg-green-50 transition-all text-center">
+              <a href="garansi/5fe39fc756f0" class="flex flex-col items-center gap-2 p-3 rounded-xl border-2 border-gray-100 hover:border-green-400 hover:bg-green-50 transition-all text-center">
                 <div class="w-9 h-9 bg-green-50 rounded-xl flex items-center justify-center">
                   <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
@@ -109,7 +109,7 @@ require_once 'backend/includes/head.php';
             <div class="shimmer"></div>
             <p class="text-white/60 text-xs font-medium mb-1 tracking-wide relative">SALDO KAMU</p>
             <p id="balance-card-amount" class="text-3xl font-bold text-white relative">Rp 0</p>
-            <a href="deposit-8baa164a7f30.php" class="btn-gold relative mt-4 !px-4 !py-2 !rounded-lg text-xs">
+            <a href="deposit/8baa164a7f30" class="btn-gold relative mt-4 !px-4 !py-2 !rounded-lg text-xs">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
               Deposit Saldo
             </a>
@@ -121,13 +121,13 @@ require_once 'backend/includes/head.php';
           <div class="card-premium">
             <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
               <h2 class="text-base font-bold text-gray-800">Pesanan Terbaru</h2>
-              <a href="pesanan-1088155b6b28.php" class="text-primary text-sm font-semibold hover:underline">Lihat Semua</a>
+              <a href="pesanan/1088155b6b28" class="text-primary text-sm font-semibold hover:underline">Lihat Semua</a>
             </div>
             <div id="recent-orders" class="p-5">
               <div class="text-center py-8 text-gray-400">
                 <svg class="w-12 h-12 mx-auto mb-3 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 <p class="text-sm">Belum ada pesanan</p>
-                <a href="toko-e3514627bb16.php" class="inline-block mt-3 text-primary font-semibold text-sm hover:underline">Belanja Sekarang</a>
+                <a href="toko/e3514627bb16" class="inline-block mt-3 text-primary font-semibold text-sm hover:underline">Belanja Sekarang</a>
               </div>
             </div>
           </div>

@@ -19,66 +19,66 @@
 
     <p class="menu-section-label">Dashboard</p>
 
-    <a href="<?= $base_path ?? '' ?>admin/index-488f58d95eb2.php" class="<?= $acp==='admin-dashboard'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>admin/index/488f58d95eb2" class="<?= $acp==='admin-dashboard'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg>
       Dashboard
     </a>
 
     <p class="menu-section-label mt-3">Manajemen</p>
 
-    <a href="<?= $base_path ?? '' ?>admin/produk-925aee06989b.php" class="<?= $acp==='admin-produk'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>admin/produk/925aee06989b" class="<?= $acp==='admin-produk'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
       Produk
     </a>
 
-    <a href="<?= $base_path ?? '' ?>admin/stok-6573bc160d8a.php" class="<?= $acp==='admin-stok'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>admin/stok/6573bc160d8a" class="<?= $acp==='admin-stok'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
       Kelola Stok
     </a>
 
-    <a href="<?= $base_path ?? '' ?>admin/pesanan-10d670e35951.php" class="<?= $acp==='admin-pesanan'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>admin/pesanan/10d670e35951" class="<?= $acp==='admin-pesanan'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
       Pesanan
     </a>
 
     <p class="menu-section-label mt-3">Keuangan</p>
 
-    <a href="<?= $base_path ?? '' ?>admin/pembayaran-22f3a2133d39.php" class="<?= $acp==='admin-pembayaran'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>admin/pembayaran/22f3a2133d39" class="<?= $acp==='admin-pembayaran'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
       Deposit & Pembayaran
       <span id="pending-badge" class="hidden ml-auto bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"></span>
     </a>
 
-    <a href="<?= $base_path ?? '' ?>admin/voucher-30c5712bd82c.php" class="<?= $acp==='admin-voucher'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>admin/voucher/30c5712bd82c" class="<?= $acp==='admin-voucher'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
       Voucher
     </a>
 
-    <a href="<?= $base_path ?? '' ?>admin/pengguna-38ec5d14f763.php" class="<?= $acp==='admin-pengguna'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>admin/pengguna/38ec5d14f763" class="<?= $acp==='admin-pengguna'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
       Pengguna
     </a>
 
     <p class="menu-section-label mt-3">Layanan</p>
 
-    <a href="<?= $base_path ?? '' ?>admin/livechat-d74596b00e3a.php" class="<?= $acp==='admin-livechat'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>admin/livechat/d74596b00e3a" class="<?= $acp==='admin-livechat'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
       Live Chat
       <span id="chat-badge" class="hidden ml-auto bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"></span>
     </a>
 
-    <a href="<?= $base_path ?? '' ?>admin/garansi-e7891b43cd17.php" class="<?= $acp==='admin-garansi'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>admin/garansi/e7891b43cd17" class="<?= $acp==='admin-garansi'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
       Garansi & Klaim
     </a>
 
-    <a href="<?= $base_path ?? '' ?>admin/pengumuman-6f51ea66d730.php" class="<?= $acp==='admin-pengumuman'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
+    <a href="<?= $base_path ?? '' ?>admin/pengumuman/6f51ea66d730" class="<?= $acp==='admin-pengumuman'?'bg-white/15 text-white':'text-white/70 hover:bg-white/10 hover:text-white' ?> flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
       Pengumuman
     </a>
 
     <div class="mt-4 mx-2">
-      <a href="<?= $base_path ?? '' ?>dashboard-225514cdf1ed.php" class="flex items-center gap-2 text-white/50 hover:text-white text-xs transition-colors">
+      <a href="<?= $base_path ?? '' ?>dashboard/225514cdf1ed" class="flex items-center gap-2 text-white/50 hover:text-white text-xs transition-colors">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         Kembali ke Panel Buyer
       </a>
