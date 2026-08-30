@@ -1,8 +1,18 @@
 <?php
 /**
- * AI live-chat auto-reply endpoint.
+ * Live-chat auto-reply endpoint.
  * POST { chat_id, message, history: [{role:'user'|'ai'|'admin', text}] }
  * Header: Authorization: Bearer <Firebase ID token>
+ *
+ * Uses a free keyword-matched FAQ bot (backend/includes/faq-bot.php)
+ * instead of a real LLM - no API key, no per-message cost, works the
+ * moment the server starts. Same approach as this project's other app
+ * (perpustakaan-digital's chatBot.ts): a fixed keyword->answer list,
+ * first match wins, and anything unrecognized gets a generic
+ * acknowledgement plus a hand-off to a human admin rather than a guess.
+ * `history` is accepted for API-shape compatibility with the previous
+ * LLM-backed version but isn't used - the bot only looks at the current
+ * message, it has no notion of conversation context.
  *
  * There is no Firebase Admin SDK / Composer in this project, so the
  * client's Firebase ID token is verified the same way every other backend
@@ -24,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 require_once '../config/app.php';
 require_once __DIR__ . '/../includes/auth-helper.php';
+require_once __DIR__ . '/../includes/faq-bot.php';
 if (file_exists(__DIR__ . '/../includes/security-monitor.php')) {
     require_once __DIR__ . '/../includes/security-monitor.php';
 }
@@ -37,7 +48,6 @@ if (!$input) {
 
 $chat_id = (string)($input['chat_id'] ?? '');
 $message = trim((string)($input['message'] ?? ''));
-$history = is_array($input['history'] ?? null) ? $input['history'] : [];
 
 if ($chat_id === '' || $message === '') {
     http_response_code(400);
@@ -59,11 +69,11 @@ if (!$uid) {
     exit;
 }
 
-// ---- Rate limit (this endpoint costs real money per call) ----
+// ---- Rate limit (cheap now, but still a public endpoint worth throttling) ----
 if (function_exists('security_rate_limit')) {
     $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-    $allowed_uid = security_rate_limit('ai:uid:' . $uid, 20, 60); // 20 msg/min per user
-    $allowed_ip  = security_rate_limit('ai:ip:' . $ip, 40, 60);   // 40 msg/min per IP
+    $allowed_uid = security_rate_limit('ai:uid:' . $uid, 30, 60);
+    $allowed_ip  = security_rate_limit('ai:ip:' . $ip, 60, 60);
     if (!$allowed_uid || !$allowed_ip) {
         http_response_code(429);
         echo json_encode(['error' => 'Terlalu banyak permintaan, coba lagi sebentar.']);
@@ -71,79 +81,5 @@ if (function_exists('security_rate_limit')) {
     }
 }
 
-if (!defined('ANTHROPIC_API_KEY') || ANTHROPIC_API_KEY === 'YOUR_ANTHROPIC_API_KEY') {
-    http_response_code(503);
-    echo json_encode(['error' => 'AI belum dikonfigurasi di server.']);
-    exit;
-}
-
-// ---- Build the Anthropic request ----
-$system_prompt = <<<PROMPT
-Kamu adalah asisten customer service untuk "Premium Store", toko akun premium digital (Netflix, Spotify, Canva, CapCut, dll), top up saldo, dan voucher. Gunakan Bahasa Indonesia baku dan formal (sapa pengguna dengan "Anda", bukan "kamu"/"lo"/"gue"), tetap ramah dan singkat, hindari singkatan tidak baku atau bahasa gaul.
-
-Kamu HANYA membantu pertanyaan umum: cara pakai produk, cara top up saldo, cara redeem voucher, cara klaim garansi, dan info umum toko. Kamu TIDAK memiliki akses ke data akun, saldo, atau pesanan spesifik pengguna.
-
-Jika pertanyaan butuh melihat data akun/pesanan spesifik, terkait pembayaran bermasalah, komplain, atau pengguna secara eksplisit minta bicara dengan admin/manusia: jawab sebaik mungkin, akhiri dengan kalimat baku persis seperti ini: "Saya akan meneruskan percakapan ini kepada admin agar dapat membantu lebih lanjut." lalu WAJIB tambahkan baris baru persis berisi: [HANDOFF]
-PROMPT;
-
-$anthropic_messages = [];
-foreach ($history as $h) {
-    if (!isset($h['role'], $h['text'])) continue;
-    $role = ($h['role'] === 'admin' || $h['role'] === 'ai') ? 'assistant' : 'user';
-    $text = trim((string)$h['text']);
-    if ($text === '') continue;
-    $anthropic_messages[] = ['role' => $role, 'content' => $text];
-}
-$anthropic_messages[] = ['role' => 'user', 'content' => $message];
-
-// bound token usage/cost - keep only the most recent turns
-if (count($anthropic_messages) > 12) {
-    $anthropic_messages = array_slice($anthropic_messages, -12);
-}
-
-$payload = [
-    'model'      => ANTHROPIC_MODEL,
-    'max_tokens' => 500,
-    'system'     => $system_prompt,
-    'messages'   => $anthropic_messages,
-];
-
-$ch = curl_init('https://api.anthropic.com/v1/messages');
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST           => true,
-    CURLOPT_POSTFIELDS     => json_encode($payload),
-    CURLOPT_HTTPHEADER     => [
-        'Content-Type: application/json',
-        'x-api-key: ' . ANTHROPIC_API_KEY,
-        'anthropic-version: 2023-06-01',
-    ],
-    CURLOPT_TIMEOUT        => 30,
-]);
-$response  = curl_exec($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curl_err  = curl_error($ch);
-curl_close($ch);
-
-if ($curl_err) {
-    http_response_code(500);
-    echo json_encode(['error' => 'cURL error: ' . $curl_err]);
-    exit;
-}
-
-$data = json_decode($response, true);
-if ($http_code !== 200 || empty($data['content'][0]['text'])) {
-    if (function_exists('security_log')) security_log('ai_api_error', 'low', ['http_code' => $http_code]);
-    http_response_code(502);
-    echo json_encode(['error' => 'AI sedang tidak tersedia, coba lagi sebentar.']);
-    exit;
-}
-
-$reply   = trim($data['content'][0]['text']);
-$handoff = false;
-if (preg_match('/\[HANDOFF\]\s*$/u', $reply)) {
-    $handoff = true;
-    $reply   = trim(preg_replace('/\[HANDOFF\]\s*$/u', '', $reply));
-}
-
-echo json_encode(['reply' => $reply, 'handoff' => $handoff]);
+$result = faq_bot_reply($message);
+echo json_encode(['reply' => $result['reply'], 'handoff' => $result['handoff']]);
