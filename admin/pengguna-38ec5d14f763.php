@@ -36,7 +36,7 @@ let allUsers=[];
 auth.onAuthStateChanged(async user=>{
   if(!user){window.location.href='../login.php';return;}
   const s=await db.collection('users').doc(user.uid).get();
-  if(!s.exists||s.data().role!=='admin'){window.location.href='../dashboard-225514cdf1ed.php';return;}
+  if(!s.exists||s.data().role!=='admin'){window.location.href='../dashboard/225514cdf1ed';return;}
   const snap=await db.collection('users').orderBy('created_at','desc').get();
   allUsers=snap.docs.map(d=>({id:d.id,...d.data()}));
   renderUsers();

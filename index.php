@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<base href="/">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= $page_title ?></title>
@@ -698,8 +699,8 @@ footer{background:#020804;padding:48px 28px 28px;border-top:1px solid rgba(234,1
 auth.onAuthStateChanged(async u=>{
   if(!u)return;
   try{const s=await firebase.firestore().collection('users').doc(u.uid).get();
-    window.location.href=(s.exists&&s.data().role==='admin')?'admin/index-488f58d95eb2.php':'dashboard-225514cdf1ed.php';
-  }catch(e){window.location.href='dashboard-225514cdf1ed.php';}
+    window.location.href=(s.exists&&s.data().role==='admin')?'admin/index/488f58d95eb2':'dashboard/225514cdf1ed';
+  }catch(e){window.location.href='dashboard/225514cdf1ed';}
 });
 
 /* ══════════════════════════════════════

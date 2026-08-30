@@ -63,7 +63,7 @@ file_put_contents($status_file, json_encode([
 ]));
 
 // Credit the deposit for real, server-side - this (not the temp file above,
-// and not deposit-8baa164a7f30.php's client) is the actual source of truth for balance.
+// and not deposit/8baa164a7f30's client) is the actual source of truth for balance.
 // See backend/includes/firestore-rest.php for why this goes through the
 // Firestore REST API instead of the Admin SDK/Cloud Functions.
 require_once __DIR__ . '/../includes/firestore-rest.php';

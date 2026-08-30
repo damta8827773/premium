@@ -35,6 +35,16 @@ RewriteBase /
 RewriteCond %{HTTP:Authorization} ^(.*)
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%1]
 
+# Obfuscated page URLs use /name/hexsuffix instead of the actual
+# name-hexsuffix.php filename on disk, so the random suffix reads as a
+# path segment rather than being visibly glued to a filename. Admin rule
+# must come first since it's the more specific of the two patterns.
+RewriteCond %{DOCUMENT_ROOT}/admin/$1-$2.php -f
+RewriteRule ^admin/([a-z][a-z-]*)/([0-9a-f]{12})/?$ admin/$1-$2.php [L,QSA]
+
+RewriteCond %{DOCUMENT_ROOT}/$1-$2.php -f
+RewriteRule ^([a-z][a-z-]*)/([0-9a-f]{12})/?$ $1-$2.php [L,QSA]
+
 # Redirect /page to /page.php (only if the .php file exists and the path isn't a real file/dir)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
