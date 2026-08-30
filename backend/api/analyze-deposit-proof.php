@@ -89,9 +89,30 @@ try {
         exit;
     }
 
+    // ---- SSRF guard ----
+    // proof_image comes from a Firestore field the buyer's own client wrote
+    // (deposits/{id}.proof_image) - firestore.rules only checks user_id and
+    // status on create, it never validates this field's value. Without this
+    // check, a buyer could bypass the UI and write an arbitrary URL here
+    // (an internal service, a cloud metadata endpoint, etc.), and this
+    // server would fetch it on their behalf. Only ever fetch from the real
+    // Firebase Storage host, over HTTPS.
+    $proof_host = parse_url($proof_url, PHP_URL_HOST);
+    $proof_scheme = parse_url($proof_url, PHP_URL_SCHEME);
+    if ($proof_scheme !== 'https' || $proof_host !== 'firebasestorage.googleapis.com') {
+        if (function_exists('security_log')) security_log('ssrf_attempt_blocked', 'high', ['deposit_id' => $deposit_id, 'uid' => $uid, 'host' => $proof_host]);
+        http_response_code(400);
+        echo json_encode(['error' => 'URL bukti pembayaran tidak valid.']);
+        exit;
+    }
+
     // ---- Download the proof image and base64-encode it for Claude vision ----
     $ch = curl_init($proof_url);
-    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 20]);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 20,
+        CURLOPT_FOLLOWLOCATION => false, // never follow redirects - a same-host redirect could still point off-host
+    ]);
     $image_bytes = curl_exec($ch);
     $img_http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE) ?: 'image/jpeg';

@@ -1,4 +1,4 @@
-<?php $page_title = "Atur Ulang Password - Premium App"; ?>
+<?php $page_title = "Atur Ulang Password - Premium App"; require_once 'backend/includes/security-headers.php'; ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>

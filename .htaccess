@@ -1,6 +1,26 @@
 Options -Indexes
 Options -MultiViews
 
+# Security headers (OWASP A05: Security Misconfiguration).
+# CSP allows 'unsafe-inline' for script/style because this app's pages use
+# inline <script> blocks throughout rather than external files or nonces -
+# rewriting that is a much larger change than a header addition. Even so,
+# this still meaningfully restricts: object-src (no Flash/plugins),
+# base-uri (no <base> tag injection), frame-ancestors (clickjacking, same
+# effect as X-Frame-Options but CSP-enforced), form-action (forms can't
+# submit to an attacker's domain), and connect-src/script-src/frame-src to
+# only the hosts this app actually talks to (Firebase, Google Sign-In,
+# Midtrans, Google Fonts) - an injected <script src="evil.com"> or a fetch()
+# to an attacker's exfil endpoint is still blocked by those.
+<IfModule mod_headers.c>
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(self)"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://www.gstatic.com https://app.midtrans.com https://app.sandbox.midtrans.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://firebasestorage.googleapis.com https://api.midtrans.com https://app.midtrans.com https://app.sandbox.midtrans.com https://api.anthropic.com; frame-src https://app.midtrans.com https://app.sandbox.midtrans.com https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+</IfModule>
+
 # PHP settings
 php_value upload_max_filesize 10M
 php_value post_max_size 10M
