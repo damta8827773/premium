@@ -18,13 +18,17 @@ if (!$data) {
 $order_id           = $data['order_id']           ?? '';
 $transaction_status = $data['transaction_status'] ?? '';
 $payment_type       = $data['payment_type']       ?? '';
-$gross_amount       = (int)($data['gross_amount'] ?? 0);
+$gross_amount_raw   = (string)($data['gross_amount'] ?? '0'); // Midtrans signs the exact string it sends (e.g. "20000.00") - must NOT be re-formatted before hashing
+$gross_amount       = (int)round((float)$gross_amount_raw);   // int form used everywhere else (balance increment, temp status file)
 $signature_key      = $data['signature_key']      ?? '';
 $status_code        = $data['status_code']        ?? '';
 $fraud_status       = $data['fraud_status']       ?? '';
 
-// Verify signature (timing-safe comparison)
-$expected_sig = hash('sha512', $order_id . $status_code . $gross_amount . MIDTRANS_SERVER_KEY);
+// Verify signature (timing-safe comparison) - must hash the RAW gross_amount
+// string exactly as Midtrans sent it, since that's what they signed. Casting
+// it to int first (e.g. "20000.00" -> 20000) changes the string and makes
+// every genuine webhook fail verification.
+$expected_sig = hash('sha512', $order_id . $status_code . $gross_amount_raw . MIDTRANS_SERVER_KEY);
 if (!hash_equals($expected_sig, $signature_key)) {
     if (file_exists(__DIR__ . '/../includes/security-monitor.php')) {
         require_once __DIR__ . '/../includes/security-monitor.php';
