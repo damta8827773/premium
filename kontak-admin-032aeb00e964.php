@@ -210,7 +210,7 @@ function renderMessages() {
       </div>
     </div>`;
     if (m.sender_type === 'ai') {
-      html += `<div class="ai-note">💬 Saya akan alihkan ke admin ketika kamu memang membutuhkan admin tersebut — atau klik "Hubungi Admin Manusia" kapan saja.</div>`;
+      html += `<div class="ai-note">💬 Saya akan meneruskan percakapan ini kepada admin apabila Anda membutuhkan bantuan lebih lanjut, atau Anda dapat mengklik "Hubungi Admin Manusia" kapan saja.</div>`;
     }
     return html;
   }).join('');
