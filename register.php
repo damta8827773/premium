@@ -1,4 +1,4 @@
-<?php $page_title = "Daftar - Premium App"; ?>
+<?php $page_title = "Daftar - Premium App"; require_once 'backend/includes/security-headers.php'; ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -155,12 +155,12 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; display:
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:260px">
       <?php
       $apps = [
-        ['image/Canva_logo.png','Canva'],
-        ['image/Netflix_logo.png','Netflix'],
-        ['image/Spotify_logo.png','Spotify'],
-        ['image/YouTube_logo.png','YouTube'],
-        ['image/CapCut_logo.png','CapCut'],
-        ['image/AlightMotion_logo.png','Alight'],
+        ['frontend/image/Canva_logo.png','Canva'],
+        ['frontend/image/Netflix_logo.png','Netflix'],
+        ['frontend/image/Spotify_logo.png','Spotify'],
+        ['frontend/image/YouTube_logo.png','YouTube'],
+        ['frontend/image/CapCut_logo.png','CapCut'],
+        ['frontend/image/AlightMotion_logo.png','Alight'],
       ];
       foreach($apps as $app): ?>
       <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px">

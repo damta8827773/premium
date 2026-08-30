@@ -1,4 +1,4 @@
-<?php $page_title = "Premium App - Akun Premium Murah, Resmi & Bergaransi"; ?>
+<?php $page_title = "Premium App - Akun Premium Murah, Resmi & Bergaransi"; require_once 'backend/includes/security-headers.php'; ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="frontend/assets/js/firebase-init.js"></script>
 <style>
 /* ══════════════════════════════════════

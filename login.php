@@ -1,6 +1,7 @@
 <?php
 $page_title = "Masuk - Premium App";
 require_once 'backend/config/app.php';
+require_once 'backend/includes/security-headers.php';
 ?>
 <!DOCTYPE html>
 <html lang="id">
