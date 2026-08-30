@@ -6,9 +6,7 @@
 
   <!-- Logo -->
   <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10">
-    <div class="w-9 h-9 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
-      <span class="text-primary font-bold text-lg">P</span>
-    </div>
+    <img src="/frontend/image/logo.svg" alt="Premium Store" class="w-9 h-9 rounded-lg flex-shrink-0">
     <div>
       <div class="text-white font-bold text-base leading-none">PREMIUM</div>
       <div class="text-yellow-400 text-xs mt-0.5 font-semibold">ADMIN PANEL</div>

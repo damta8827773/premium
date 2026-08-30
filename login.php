@@ -10,6 +10,7 @@ require_once 'backend/includes/security-headers.php';
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= $page_title ?></title>
+<link rel="icon" href="/frontend/image/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -170,9 +171,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; display:
   <div style="position:relative;z-index:1">
     <!-- Logo -->
     <a href="index.php" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:56px">
-      <div style="width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.2)">
-        <span style="color:#fff;font-weight:900;font-size:15px">P</span>
-      </div>
+      <img src="/frontend/image/logo.svg" alt="Premium Store" style="width:36px;height:36px;border-radius:10px">
       <span style="color:#fff;font-weight:900;font-size:18px;letter-spacing:0.04em">PREMIUM</span>
     </a>
 
@@ -240,9 +239,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; display:
     <!-- Mobile logo -->
     <div style="display:none;margin-bottom:32px" id="mobile-logo">
       <a href="index.php" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none">
-        <div style="width:32px;height:32px;background:#1B3528;border-radius:8px;display:flex;align-items:center;justify-content:center">
-          <span style="color:#fff;font-weight:900;font-size:13px">P</span>
-        </div>
+        <img src="/frontend/image/logo.svg" alt="Premium Store" style="width:32px;height:32px;border-radius:8px">
         <span style="color:#1B3528;font-weight:900;font-size:17px">PREMIUM</span>
       </a>
     </div>

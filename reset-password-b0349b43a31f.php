@@ -6,6 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= $page_title ?></title>
+<link rel="icon" href="/frontend/image/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -40,7 +41,7 @@ h1 { font-size: 1.4rem; font-weight: 900; color: #111827; margin-bottom: 6px; }
 <body>
 <div class="box">
   <div class="logo">
-    <div class="logo-mark"><span>P</span></div>
+    <img src="/frontend/image/logo.svg" alt="Premium Store" class="logo-mark">
     <span class="logo-text">PREMIUM</span>
   </div>
 
