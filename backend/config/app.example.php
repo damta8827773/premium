@@ -33,7 +33,7 @@ define('FIREBASE_SERVICE_ACCOUNT_PATH', __DIR__ . '/firebase-service-account.jso
 // Anthropic (Claude) API - AI live-chat auto-reply
 // Get a key from https://console.anthropic.com/settings/keys
 define('ANTHROPIC_API_KEY', 'YOUR_ANTHROPIC_API_KEY');
-define('ANTHROPIC_MODEL', 'claude-haiku-4-5-20251001');
+define('ANTHROPIC_MODEL', 'claude-haiku-4-5');
 
 // Upload config
 define('UPLOAD_DIR', __DIR__ . '/../../uploads/');
