@@ -6,6 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= $page_title ?></title>
+<link rel="icon" href="/frontend/image/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -20,7 +21,6 @@
   --gold:#EAB308;--gold-l:#FCD34D;--gold-d:#ca8a04;
   --green:#1B3528;--green-l:#2d5a42;
   --bg:#020804;
-  --cursor-x:50%;--cursor-y:50%;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -30,7 +30,6 @@ body{
   color:#e8f0ea;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
-  cursor:none;
 }
 a{text-decoration:none;color:inherit}
 img{display:block}
@@ -45,34 +44,6 @@ body::before{
   animation:scanMove 8s linear infinite;
 }
 @keyframes scanMove{to{background-position:0 100px}}
-
-/* ══════════════════════════════════════
-   CURSOR SPOTLIGHT OVERLAY
-══════════════════════════════════════ */
-#spotlight{
-  position:fixed;inset:0;z-index:8000;pointer-events:none;
-  background:radial-gradient(
-    650px circle at var(--cursor-x) var(--cursor-y),
-    transparent 0%,
-    rgba(2,8,4,0.55) 55%,
-    rgba(2,8,4,0.92) 80%
-  );
-  transition:background 0.08s;
-}
-
-/* ══════════════════════════════════════
-   CUSTOM CURSOR
-══════════════════════════════════════ */
-#cur{
-  position:fixed;z-index:9999;pointer-events:none;
-  width:12px;height:12px;border-radius:50%;
-  background:var(--gold);
-  box-shadow:0 0 20px 6px rgba(234,179,8,0.5),0 0 60px 12px rgba(234,179,8,0.15);
-  transform:translate(-50%,-50%);
-  transition:width .25s,height .25s,box-shadow .25s;
-  mix-blend-mode:normal;
-}
-#cur.big{width:60px;height:60px;background:rgba(234,179,8,0.08);box-shadow:0 0 0 1px rgba(234,179,8,0.35),0 0 40px 4px rgba(234,179,8,0.1)}
 
 /* ══════════════════════════════════════
    NAVBAR
@@ -184,7 +155,7 @@ body::before{
   display:inline-flex;align-items:center;gap:8px;
   background:linear-gradient(135deg,var(--gold-l),var(--gold));
   color:#000;font-weight:800;font-size:15px;padding:15px 34px;
-  border-radius:14px;border:none;cursor:none;
+  border-radius:14px;border:none;cursor:pointer;
   box-shadow:0 0 30px rgba(234,179,8,0.4),0 0 80px rgba(234,179,8,0.1);
   transition:all .3s;position:relative;overflow:hidden;
 }
@@ -202,7 +173,7 @@ body::before{
   display:inline-flex;align-items:center;gap:8px;
   background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.65);
   font-weight:600;font-size:15px;padding:15px 34px;border-radius:14px;
-  border:1px solid rgba(255,255,255,0.1);cursor:none;
+  border:1px solid rgba(255,255,255,0.1);cursor:pointer;
   backdrop-filter:blur(12px);transition:all .3s;
 }
 .btn-ghost:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2);color:#fff}
@@ -237,7 +208,7 @@ body::before{
 
 /* Billing toggle */
 .bill-wrap{display:inline-flex;background:#f3f4f6;border-radius:12px;padding:4px;margin-bottom:44px}
-.bill-btn{padding:9px 22px;border-radius:9px;font-size:14px;font-weight:600;border:none;background:transparent;color:#6b7280;cursor:none;transition:all .2s}
+.bill-btn{padding:9px 22px;border-radius:9px;font-size:14px;font-weight:600;border:none;background:transparent;color:#6b7280;cursor:pointer;transition:all .2s}
 .bill-btn.on{background:#fff;color:#111;box-shadow:0 2px 12px rgba(0,0,0,0.1)}
 .save-tag{background:var(--green);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:5px;margin-left:5px;vertical-align:middle}
 
@@ -253,7 +224,7 @@ body::before{
   overflow:hidden;
   transform-style:preserve-3d;
   transition:transform .15s,box-shadow .15s;
-  cursor:none;
+  cursor:pointer;
   --hx:.5;--hy:.5;--hdeg:0deg;--hop:0;
 }
 /* Holographic iridescent overlay */
@@ -321,7 +292,7 @@ body::before{
   display:block;text-align:center;width:100%;padding:11px;border-radius:11px;
   font-size:13px;font-weight:700;letter-spacing:.02em;
   background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);
-  border:1px solid rgba(255,255,255,0.1);cursor:none;
+  border:1px solid rgba(255,255,255,0.1);cursor:pointer;
   transition:all .25s;
 }
 .cbuy:hover{background:rgba(234,179,8,0.15);border-color:rgba(234,179,8,0.4);color:var(--gold);box-shadow:0 0 20px rgba(234,179,8,0.1)}
@@ -393,7 +364,7 @@ body::before{
 .flist{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
 .fitem{border:1.5px solid #f0f0f0;border-radius:16px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
 .fitem.open{border-color:var(--green);box-shadow:0 4px 24px rgba(27,53,40,0.08)}
-.fq{padding:18px 22px;font-size:14px;font-weight:700;color:#111;cursor:none;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:background .15s}
+.fq{padding:18px 22px;font-size:14px;font-weight:700;color:#111;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:background .15s}
 .fq:hover{background:#f9fafb}
 .fq svg{flex-shrink:0;color:#9ca3af;transition:transform .3s cubic-bezier(.16,1,.3,1)}
 .fitem.open .fq svg{transform:rotate(180deg)}
@@ -442,19 +413,16 @@ footer{background:#020804;padding:48px 28px 28px;border-top:1px solid rgba(234,1
    RESPONSIVE
 ══════════════════════════════════════ */
 @media(max-width:900px){.steps{grid-template-columns:1fr}.step-arr{display:none}}
-@media(max-width:680px){.nav-links{display:none}.stat-bar{flex-direction:column;max-width:260px}.stat{border-right:none;border-bottom:1px solid rgba(234,179,8,0.07)}.stat:last-child{border-bottom:none}.footer-top{flex-direction:column}#cur{display:none}body{cursor:auto}#spotlight{display:none}}
+@media(max-width:680px){.nav-links{display:none}.stat-bar{flex-direction:column;max-width:260px}.stat{border-right:none;border-bottom:1px solid rgba(234,179,8,0.07)}.stat:last-child{border-bottom:none}.footer-top{flex-direction:column}}
 </style>
 </head>
 <body>
-
-<div id="spotlight"></div>
-<div id="cur"></div>
 
 <!-- ═════════════ NAVBAR ═════════════ -->
 <nav id="nav">
   <div class="nav-inner">
     <a href="index.php" class="logo">
-      <div class="logo-mark"><span style="color:var(--gold);font-weight:900;font-size:14px">P</span></div>
+      <img src="/frontend/image/logo.svg" alt="Premium Store" class="logo-mark">
       <span class="logo-text">PREMIUM</span>
     </a>
     <div class="nav-links">
@@ -671,7 +639,7 @@ footer{background:#020804;padding:48px 28px 28px;border-top:1px solid rgba(234,1
     <div class="footer-top">
       <div class="footer-brand">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <div style="width:30px;height:30px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center"><span style="color:var(--gold);font-weight:900;font-size:12px">P</span></div>
+          <img src="/frontend/image/logo.svg" alt="Premium Store" style="width:30px;height:30px;border-radius:8px">
           <span class="flogo-t">PREMIUM</span>
         </div>
         <p class="fbrand-p">Penyedia akun premium terpercaya dengan harga terbaik dan garansi resmi.</p>
@@ -701,29 +669,6 @@ auth.onAuthStateChanged(async u=>{
   try{const s=await firebase.firestore().collection('users').doc(u.uid).get();
     window.location.href=(s.exists&&s.data().role==='admin')?'admin/index/488f58d95eb2':'dashboard/225514cdf1ed';
   }catch(e){window.location.href='dashboard/225514cdf1ed';}
-});
-
-/* ══════════════════════════════════════
-   CURSOR - glow dot with smooth lerp
-══════════════════════════════════════ */
-const cur=document.getElementById('cur');
-const spot=document.getElementById('spotlight');
-let tx=window.innerWidth/2,ty=window.innerHeight/2,cx=tx,cy=ty;
-document.addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY;},{passive:true});
-(function loop(){
-  cx+=(tx-cx)*0.14;cy+=(ty-cy)*0.14;
-  cur.style.left=cx+'px';cur.style.top=cy+'px';
-  spot.style.setProperty('--cursor-x',tx+'px');
-  spot.style.setProperty('--cursor-y',ty+'px');
-  /* chromatic trail on fast movement */
-  const spd=Math.sqrt((tx-cx)**2+(ty-cy)**2);
-  document.documentElement.style.setProperty('--cursor-x',tx+'px');
-  document.documentElement.style.setProperty('--cursor-y',ty+'px');
-  requestAnimationFrame(loop);
-})();
-document.querySelectorAll('a,button,.pcard,.bcard,.tcard,.fq').forEach(el=>{
-  el.addEventListener('mouseenter',()=>cur.classList.add('big'));
-  el.addEventListener('mouseleave',()=>cur.classList.remove('big'));
 });
 
 /* ══════════════════════════════════════
